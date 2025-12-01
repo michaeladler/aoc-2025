@@ -1,0 +1,59 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.38.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           aoc2025
+version:        0.0.0
+author:         Michael Adler
+maintainer:     Michael Adler
+copyright:      (c) 2025 Michael Adler
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+
+library
+  exposed-modules:
+      Day01
+  other-modules:
+      Paths_aoc2025
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      attoparsec
+    , base
+    , text
+  default-language: Haskell2010
+
+executable aoc2025
+  main-is: Main.hs
+  other-modules:
+      Paths_aoc2025
+  hs-source-dirs:
+      app
+  ghc-options: -Wall
+  build-depends:
+      aoc2025
+    , attoparsec
+    , base
+    , text
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Day01Spec
+      Paths_aoc2025
+  hs-source-dirs:
+      test
+  ghc-options: -Wall
+  build-depends:
+      aoc2025
+    , attoparsec
+    , base
+    , hspec
+    , text
+  default-language: Haskell2010

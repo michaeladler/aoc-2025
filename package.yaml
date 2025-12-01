@@ -1,0 +1,30 @@
+name: aoc2025
+version: 0.0.0
+license: MIT
+copyright: (c) 2025 Michael Adler
+author: Michael Adler
+maintainer: Michael Adler 
+
+ghc-options: -Wall
+
+dependencies:
+   - base
+   - text
+   - attoparsec
+
+executable:
+  main: Main.hs
+  source-dirs: app
+  dependencies:
+    - aoc2025
+
+library:
+  source-dirs: src
+
+tests:
+  spec:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - aoc2025
+      - hspec
