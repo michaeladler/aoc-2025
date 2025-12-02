@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.38.0.
+-- This file has been generated from package.yaml by hpack version 0.38.2.
 --
 -- see: https://github.com/sol/hpack
 
@@ -15,11 +15,17 @@ build-type:     Simple
 
 library
   exposed-modules:
+      AocUtils
       Day01
+      Day02
   other-modules:
       Paths_aoc2025
   hs-source-dirs:
       src
+  default-extensions:
+      OverloadedStrings
+      MultilineStrings
+      GADTs
   ghc-options: -Wall
   build-depends:
       attoparsec
@@ -33,6 +39,10 @@ executable aoc2025
       Paths_aoc2025
   hs-source-dirs:
       app
+  default-extensions:
+      OverloadedStrings
+      MultilineStrings
+      GADTs
   ghc-options: -Wall
   build-depends:
       aoc2025
@@ -46,14 +56,20 @@ test-suite spec
   main-is: Spec.hs
   other-modules:
       Day01Spec
+      Day02Spec
       Paths_aoc2025
   hs-source-dirs:
       test
+  default-extensions:
+      OverloadedStrings
+      MultilineStrings
+      GADTs
   ghc-options: -Wall
   build-depends:
       aoc2025
     , attoparsec
     , base
-    , hspec
+    , hspec ==2.*
     , text
   default-language: Haskell2010
+  build-tool-depends: hspec-discover:hspec-discover == 2.*

@@ -2,7 +2,6 @@ module Day01 (solve) where
 
 import Control.Applicative
 import Data.Attoparsec.Text
-import Data.Foldable (foldl')
 import Data.Int (Int32)
 import Data.Text (Text)
 

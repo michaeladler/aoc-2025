@@ -1,7 +1,9 @@
 module Main where
 
+import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Day01
+import Day02
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -15,12 +17,13 @@ main = do
     _ -> putStrLn "Please provide a day number as the first argument."
 
 runDay :: Int -> IO ()
-runDay 1 = day01
+runDay 1 = solveDay Day01.solve "input/01.txt"
+runDay 2 = solveDay Day02.solve "input/02.txt"
 runDay _ = putStrLn "Day not implemented yet."
 
-day01 :: IO ()
-day01 = do
-  content <- TIO.readFile "input/01.txt"
-  case Day01.solve content of
+solveDay :: (Show a) => (T.Text -> Either String a) -> FilePath -> IO ()
+solveDay solver fileName = do
+  content <- TIO.readFile fileName
+  case solver content of
     Left err -> print err
     Right ok -> print ok

@@ -12,6 +12,11 @@ dependencies:
    - text
    - attoparsec
 
+default-extensions:
+  - OverloadedStrings
+  - MultilineStrings
+  - GADTs
+
 executable:
   main: Main.hs
   source-dirs: app
@@ -23,8 +28,5 @@ library:
 
 tests:
   spec:
-    main: Spec.hs
-    source-dirs: test
-    dependencies:
-      - aoc2025
-      - hspec
+    defaults: hspec/hspec@main
+    dependencies: aoc2025
