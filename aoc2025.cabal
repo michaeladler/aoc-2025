@@ -43,7 +43,7 @@ executable aoc2025
       OverloadedStrings
       MultilineStrings
       GADTs
-  ghc-options: -Wall
+  ghc-options: -Wall -O2
   build-depends:
       aoc2025
     , attoparsec
