@@ -1,4 +1,5 @@
-{ mkDerivation, attoparsec, base, hspec, hspec-discover, lib, text
+{ mkDerivation, attoparsec, base, containers, hspec, hspec-discover
+, lib, text
 }:
 mkDerivation {
   pname = "aoc2025";
@@ -6,9 +7,9 @@ mkDerivation {
   src = ./.;
   isLibrary = true;
   isExecutable = true;
-  libraryHaskellDepends = [ attoparsec base text ];
-  executableHaskellDepends = [ attoparsec base text ];
-  testHaskellDepends = [ attoparsec base hspec text ];
+  libraryHaskellDepends = [ attoparsec base containers text ];
+  executableHaskellDepends = [ attoparsec base containers text ];
+  testHaskellDepends = [ attoparsec base containers hspec text ];
   testToolDepends = [ hspec-discover ];
   license = lib.licenses.mit;
   mainProgram = "aoc2025";

@@ -1,14 +1,14 @@
 module Day03Spec (spec) where
 
+import qualified Data.Text as T
 import Day03 (solve)
 import Test.Hspec
-import qualified Data.Text as T
 
 spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve exampleInput `shouldBe` Right (357, 0)
+      solve exampleInput `shouldBe` Right (357, 3121910778619)
 
 exampleInput :: T.Text
 exampleInput =
