@@ -1,12 +1,27 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Day01Spec (spec) where
 
 import Day01 (solve)
 import Test.Hspec
+import qualified Data.Text as T
 
 spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82\n" `shouldBe` Right (3, 6)
+      solve exampleInput `shouldBe` Right (3, 6)
+
+exampleInput :: T.Text
+exampleInput =
+  """
+  L68
+  L30
+  R48
+  L5
+  R60
+  L55
+  L1
+  L99
+  R14
+  L82
+
+  """
