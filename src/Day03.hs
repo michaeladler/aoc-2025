@@ -23,32 +23,13 @@ solveInternal banks = (helper 2, helper 12)
 listToNumber :: [MyInt] -> MyInt
 listToNumber = foldl' (\acc d -> acc * 10 + d) 0
 
--- Idea: Top-down approach.
--- Take each number in the list as a candidate for the leftmost digit.
--- Let's say the candidate is at position i.
--- Then consider the sublist starting at position i+1 and find the (k-1)th largest number.
--- For each constructed number (candidate + (k-1)th largest), use the maximum value.
 kLargest :: Int -> [MyInt] -> [MyInt]
-kLargest k xs
-  | k == 1 && not (null xs) = [maximum xs]
-  | k > 1 && length xs >= k =
-      let toCheck = getPairs xs
-          candidates = filter (\ys -> length ys == k) $ map (\(y, ys) -> y : kLargest (k - 1) ys) toCheck
-          candidates' = List.sortBy (\lhs rhs -> listToNumber rhs `compare` listToNumber lhs) candidates
-       in head candidates'
-  | otherwise = []
+kLargest 0 _ = []
+kLargest k bank =
+  let takeUntil = length bank - k + 1
+      (maxVal, pos) = maxWithPos (List.take takeUntil bank)
+      restBank = drop (pos + 1) bank
+   in maxVal : kLargest (k - 1) restBank
 
--- | Given a list of integers, create a list of pairs.
--- For each element in the input list, the pair consists of the element itself
--- and a list containing all subsequent elements (the suffix of the original
--- list starting from the next position).
---
--- For example:
--- >>> getPairs [1,2,3,4]
--- [(1,[2,3,4]),(2,[3,4]),(3,[4]),(4,[])]
---
--- @param xs The input list of integers.
--- @return A list of tuples, where each tuple is (element, suffix_list).
-getPairs :: [a] -> [(a, [a])]
-getPairs [] = []
-getPairs (x : xs) = (x, xs) : getPairs xs
+maxWithPos :: [MyInt] -> (Int, Int)
+maxWithPos bank = List.minimumBy (\lhs rhs -> fst rhs `compare` fst lhs) (zip bank [0 ..])
