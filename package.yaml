@@ -11,12 +11,11 @@ dependencies:
    - base
    - text
    - attoparsec
-   - containers
+   - matrix
 
 default-extensions:
   - OverloadedStrings
   - MultilineStrings
-  - GADTs
 
 executable:
   main: Main.hs
