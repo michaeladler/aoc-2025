@@ -31,10 +31,13 @@ parseCell = (AP.char '.' >> pure Empty) <|> (AP.char '@' >> pure Paper)
 solveInternal :: [[Cell]] -> (MyInt, MyInt)
 solveInternal input =
   let grid = cellsToGrid input
-      canBeRemoved k = adjacentPositions grid k < 4
       part1 = HS.foldl' f 0 grid
-      f acc k = if canBeRemoved k then acc + 1 else acc
-   in (part1, 0)
+      part2 = removePaper grid
+      f acc k = if canBeRemoved grid k then acc + 1 else acc
+   in (part1, part2)
+
+canBeRemoved :: Grid -> (Int, Int) -> Bool
+canBeRemoved grid k = adjacentPositions grid k < 4
 
 -- collect neighbors from all adjacent positions (up to 8)
 adjacentPositions :: Grid -> (Int, Int) -> Int
@@ -68,20 +71,17 @@ isPaper :: Cell -> Bool
 isPaper Paper = True
 isPaper _ = False
 
--- Experimental Area
+-- a single iteration
+removePaperStep :: Grid -> (Int, Grid)
+removePaperStep grid = HS.foldl' f (0, grid) grid
+  where
+    f :: (Int, Grid) -> (Int, Int) -> (Int, Grid)
+    f (acc, g) k = if canBeRemoved g k then (acc + 1, HS.delete k g) else (acc, g)
 
-exampleInput :: Text
-exampleInput =
-  """
-  ..@@.@@@@.
-  @@@.@.@.@@
-  @@@@@.@.@@
-  @.@@@@..@.
-  @@.@@@@.@@
-  .@@@@@@@.@
-  .@.@.@.@@@
-  @.@@@.@@@@
-  .@@@@@@@@.
-  @.@.@@@.@.
+removePaper :: Grid -> Int
+removePaper grid = go grid 0
 
-  """
+go :: Grid -> Int -> Int
+go grid count =
+  let (delta, grid') = removePaperStep grid
+   in if delta == 0 then count else go grid' count + delta
