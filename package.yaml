@@ -11,7 +11,8 @@ dependencies:
    - base
    - text
    - attoparsec
-   - matrix
+   # - matrix
+   - unordered-containers
 
 default-extensions:
   - OverloadedStrings
