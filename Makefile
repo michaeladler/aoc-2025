@@ -1,12 +1,12 @@
-
-ALL_FILES := aoc2025.cabal pkg.nix
+ALL_FILES := aoc2025.cabal nix/pkg.nix
 
 all: $(ALL_FILES)
 
-aoc2025.cabal: package.yaml
+.PHONY: aoc2025.cabal
+aoc2025.cabal:
 	hpack
 
-pkg.nix: aoc2025.cabal
+nix/pkg.nix: aoc2025.cabal
 	cabal2nix ./. >$@
 
 .PHONY: clean
