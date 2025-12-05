@@ -1,8 +1,10 @@
 module Day05 where
 
 import Data.Attoparsec.Text (Parser, char, decimal, endOfLine, parseOnly, sepBy)
-import Data.Text (Text)
 import Data.Either (fromRight)
+import Data.Foldable (find)
+import Data.Maybe (isJust)
+import Data.Text (Text)
 
 type MyInt = Int
 
@@ -36,8 +38,18 @@ parseIngredients :: Parser [MyInt]
 parseIngredients = decimal `sepBy` endOfLine
 
 solveInternal :: ([Interval], [MyInt]) -> (MyInt, MyInt)
-solveInternal input = (0, 0)
+solveInternal (fresh, ingredients) =
+  let part1 = length (filter id (map (\ing -> ingredientIsFresh fresh ing) ingredients))
+   in (part1, 0)
 
+ingredientIsFresh :: [Interval] -> MyInt -> Bool
+ingredientIsFresh ivs ing = isJust $ find id (map (`containsIngredient` ing) ivs)
+
+containsIngredient :: Interval -> MyInt -> Bool
+containsIngredient (Interval (a, b)) x = a <= x && x <= b
+ 
+
+-- Experimental Area
 example :: ([Interval], [MyInt])
 example = fromRight ([], []) $ parseOnly parseInput exampleInput
 

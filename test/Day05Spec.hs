@@ -8,7 +8,7 @@ spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve exampleInput `shouldBe` Right (0, 0)
+      solve exampleInput `shouldBe` Right (3, 0)
 
 exampleInput :: T.Text
 exampleInput =

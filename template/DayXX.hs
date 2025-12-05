@@ -1,7 +1,6 @@
 module DayXX where
 
-import Data.Attoparsec.Text (Parser, endOfLine, many1, sepBy)
-import qualified Data.Attoparsec.Text as AP
+import Data.Attoparsec.Text (Parser, char, decimal, endOfLine, parseOnly, sepBy)
 import Data.Text (Text)
 
 type MyInt = Int
@@ -16,3 +15,24 @@ parseInput = many1 AP.decimal `sepBy` endOfLine
 
 solveInternal :: [[MyInt]] -> (MyInt, MyInt)
 solveInternal input = (0, 0)
+
+-- Experimental Area
+example :: ([Interval], [MyInt])
+example = fromRight ([], []) $ parseOnly parseInput exampleInput
+
+exampleInput :: Text
+exampleInput =
+  """
+  3-5
+  10-14
+  16-20
+  12-18
+
+  1
+  5
+  8
+  11
+  17
+  32
+
+  """
