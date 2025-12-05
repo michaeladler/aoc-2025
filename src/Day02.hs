@@ -1,4 +1,4 @@
-module Day02 where
+module Day02 (solve, invalidIDs, isInvalidID) where
 
 import AocUtils (intToText)
 import Data.Attoparsec.Text

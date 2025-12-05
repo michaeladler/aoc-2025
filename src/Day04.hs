@@ -1,4 +1,4 @@
-module Day04 where
+module Day04 (solve) where
 
 import Control.Applicative ((<|>))
 import Data.Attoparsec.Text (Parser, endOfLine, many1, sepBy)

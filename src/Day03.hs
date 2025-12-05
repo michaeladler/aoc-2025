@@ -1,4 +1,4 @@
-module Day03 where
+module Day03 (solve) where
 
 import Data.Attoparsec.Text
 import Data.Char (digitToInt)
