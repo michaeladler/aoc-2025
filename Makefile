@@ -1,6 +1,8 @@
 ALL_FILES := aoc2025.cabal nix/pkg.nix
 
-all: $(ALL_FILES)
+.PHONY: test
+build: $(ALL_FILES)
+	cabal build
 
 .PHONY: aoc2025.cabal
 aoc2025.cabal:

@@ -2,6 +2,7 @@ module DayXX where
 
 import Data.Attoparsec.Text (Parser, char, decimal, endOfLine, parseOnly, sepBy)
 import Data.Text (Text)
+import Data.Either (fromRight)
 
 type MyInt = Int
 
@@ -17,8 +18,8 @@ solveInternal :: [[MyInt]] -> (MyInt, MyInt)
 solveInternal input = (0, 0)
 
 -- Experimental Area
-example :: ([Interval], [MyInt])
-example = fromRight ([], []) $ parseOnly parseInput exampleInput
+example :: [[MyInt]]
+example = fromRight [] $ parseOnly parseInput exampleInput
 
 exampleInput :: Text
 exampleInput =
