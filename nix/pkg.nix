@@ -1,5 +1,5 @@
-{ mkDerivation, attoparsec, base, hspec, hspec-discover, lib
-, matrix, text, unordered-containers
+{ mkDerivation, attoparsec, base, bytestring, hspec, hspec-discover
+, lib, matrix, text, unordered-containers, vector
 }:
 mkDerivation {
   pname = "aoc2025";
@@ -8,13 +8,14 @@ mkDerivation {
   isLibrary = true;
   isExecutable = true;
   libraryHaskellDepends = [
-    attoparsec base matrix text unordered-containers
+    attoparsec base bytestring matrix text unordered-containers vector
   ];
   executableHaskellDepends = [
-    attoparsec base matrix text unordered-containers
+    attoparsec base bytestring matrix text unordered-containers vector
   ];
   testHaskellDepends = [
-    attoparsec base hspec matrix text unordered-containers
+    attoparsec base bytestring hspec matrix text unordered-containers
+    vector
   ];
   testToolDepends = [ hspec-discover ];
   license = lib.licenses.mit;

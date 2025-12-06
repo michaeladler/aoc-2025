@@ -1,5 +1,6 @@
 module Main where
 
+import qualified Data.ByteString.Char8 as C
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Day01
@@ -26,12 +27,19 @@ runDay 2 = solveDay Day02.solve "input/02.txt"
 runDay 3 = solveDay Day03.solve "input/03.txt"
 runDay 4 = solveDay Day04.solve "input/04.txt"
 runDay 5 = solveDay Day05.solve "input/05.txt"
-runDay 6 = solveDay Day06.solve "input/06.txt"
+runDay 6 = solveDay' Day06.solve "input/06.txt"
 runDay _ = putStrLn "Day not implemented yet."
 
 solveDay :: (Show a) => (T.Text -> Either String a) -> FilePath -> IO ()
 solveDay solver fileName = do
   content <- TIO.readFile fileName
+  case solver content of
+    Left err -> print err
+    Right ok -> print ok
+
+solveDay' :: (Show a) => (C.ByteString -> Either String a) -> FilePath -> IO ()
+solveDay' solver fileName = do
+  content <- C.readFile fileName
   case solver content of
     Left err -> print err
     Right ok -> print ok

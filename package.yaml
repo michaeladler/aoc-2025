@@ -12,7 +12,9 @@ dependencies:
    - text
    - attoparsec
    - matrix
+   - vector
    - unordered-containers
+   - bytestring
 
 default-extensions:
   - OverloadedStrings
