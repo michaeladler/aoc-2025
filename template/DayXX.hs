@@ -1,27 +1,27 @@
-module DayXX where
+module DayXX (solve) where
 
-import Data.Attoparsec.Text (Parser, char, decimal, endOfLine, parseOnly, sepBy)
-import Data.Text (Text)
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly, sepBy, many1)
 import Data.Either (fromRight)
+import qualified Data.ByteString.Char8 as C
 
 type MyInt = Int
 
-solve :: Text -> Either String (MyInt, MyInt)
-solve content = case AP.parseOnly parseInput content of
+solve :: C.ByteString -> Either String (MyInt, MyInt)
+solve content = case parseOnly inputParser content of
   Left err -> Left err
   Right result -> Right (solveInternal result)
 
-parseInput :: Parser [[MyInt]]
-parseInput = many1 AP.decimal `sepBy` endOfLine
+inputParser :: Parser [[MyInt]]
+inputParser = many1 decimal `sepBy` endOfLine
 
 solveInternal :: [[MyInt]] -> (MyInt, MyInt)
 solveInternal input = (0, 0)
 
 -- Experimental Area
 example :: [[MyInt]]
-example = fromRight [] $ parseOnly parseInput exampleInput
+example = fromRight [] $ parseOnly inputParser exampleInput
 
-exampleInput :: Text
+exampleInput :: C.ByteString
 exampleInput =
   """
   3-5

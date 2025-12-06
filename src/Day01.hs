@@ -1,9 +1,9 @@
 module Day01 (solve) where
 
 import Control.Applicative
-import Data.Attoparsec.Text
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly)
+import qualified Data.ByteString.Char8 as C
 import Data.Int (Int32)
-import Data.Text (Text)
 
 type MyInt = Int32
 
@@ -13,13 +13,13 @@ data Direction = L | R
 newtype Command = Command (Direction, MyInt)
   deriving (Show, Eq)
 
-solve :: Text -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve content = do
   case parseCommands content of
     Left err -> Left err
     Right result -> Right (solveInternal result)
 
-parseCommands :: Text -> Either String [Command]
+parseCommands :: C.ByteString -> Either String [Command]
 parseCommands = parseOnly (many' commandParser)
   where
     commandParser :: Parser Command

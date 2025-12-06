@@ -9,7 +9,6 @@ ghc-options: -Wall
 
 dependencies:
    - base
-   - text
    - attoparsec
    - matrix
    - vector

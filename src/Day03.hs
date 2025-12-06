@@ -1,13 +1,13 @@
 module Day03 (solve) where
 
-import Data.Attoparsec.Text
+import Data.Attoparsec.ByteString.Char8 (Parser, digit, endOfLine, many1, parseOnly, sepBy)
+import qualified Data.ByteString.Char8 as C
 import Data.Char (digitToInt)
 import qualified Data.List as List
-import Data.Text (Text)
 
 type MyInt = Int
 
-solve :: Text -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve content = case parseOnly parseInput content of
   Left err -> Left err
   Right result -> Right (solveInternal result)

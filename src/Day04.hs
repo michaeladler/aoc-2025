@@ -1,11 +1,10 @@
 module Day04 (solve) where
 
 import Control.Applicative ((<|>))
-import Data.Attoparsec.Text (Parser, endOfLine, many1, sepBy)
-import qualified Data.Attoparsec.Text as AP
+import Data.Attoparsec.ByteString.Char8 (Parser, char, endOfLine, many1, parseOnly, sepBy)
+import qualified Data.ByteString.Char8 as C
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HS
-import Data.Text (Text)
 
 type MyInt = Int
 
@@ -14,19 +13,19 @@ data Cell = Empty | Paper
 
 type Grid = HashSet (Int, Int) -- first int is row, second is col
 
-solve :: Text -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve input = case parseInput input of
   Left err -> Left err
   Right result -> Right (solveInternal result)
 
-parseInput :: Text -> Either String [[Cell]]
-parseInput = AP.parseOnly parseInput'
+parseInput :: C.ByteString -> Either String [[Cell]]
+parseInput = parseOnly parseInput'
 
 parseInput' :: Parser [[Cell]]
 parseInput' = many1 parseCell `sepBy` endOfLine
 
 parseCell :: Parser Cell
-parseCell = (AP.char '.' >> pure Empty) <|> (AP.char '@' >> pure Paper)
+parseCell = (char '.' >> pure Empty) <|> (char '@' >> pure Paper)
 
 solveInternal :: [[Cell]] -> (MyInt, MyInt)
 solveInternal input =

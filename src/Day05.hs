@@ -1,16 +1,16 @@
 module Day05 (solve) where
 
-import Data.Attoparsec.Text (Parser, char, decimal, endOfLine, parseOnly, sepBy)
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, parseOnly, sepBy)
+import qualified Data.ByteString.Char8 as C
 import Data.Foldable (find)
 import Data.Maybe (isJust)
-import Data.Text (Text)
 
 type MyInt = Int
 
 newtype Interval = Interval (MyInt, MyInt)
   deriving (Eq, Show)
 
-solve :: Text -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve content = case parseOnly parseInput content of
   Left err -> Left err
   Right result -> Right (solveInternal result)

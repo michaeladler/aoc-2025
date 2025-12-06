@@ -2,7 +2,7 @@ module Day01Spec (spec) where
 
 import Day01 (solve)
 import Test.Hspec
-import qualified Data.Text as T
+import qualified Data.ByteString.Char8 as C
 
 spec :: Spec
 spec = do
@@ -10,7 +10,7 @@ spec = do
     it "should solve the example" $ do
       solve exampleInput `shouldBe` Right (3, 6)
 
-exampleInput :: T.Text
+exampleInput :: C.ByteString
 exampleInput =
   """
   L68

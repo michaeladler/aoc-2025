@@ -1,6 +1,6 @@
 module Day05Spec (spec) where
 
-import qualified Data.Text as T
+import qualified Data.ByteString.Char8 as C
 import Day05 (solve)
 import Test.Hspec
 
@@ -10,7 +10,7 @@ spec = do
     it "should solve the example" $ do
       solve exampleInput `shouldBe` Right (3, 14)
 
-exampleInput :: T.Text
+exampleInput :: C.ByteString
 exampleInput =
   """
   3-5

@@ -1,16 +1,15 @@
 module Day02 (solve, invalidIDs, isInvalidID) where
 
-import AocUtils (intToText)
-import Data.Attoparsec.Text
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, parseOnly, sepBy)
+import qualified Data.ByteString.Builder as BB
+import qualified Data.ByteString.Char8 as C
+import qualified Data.ByteString.Lazy as BL
 import Data.Foldable (find)
-import Data.Int (Int64)
 import Data.Maybe (isJust)
-import Data.Text (Text)
-import qualified Data.Text as T
 
-type MyInt = Int64
+type MyInt = Int
 
-solve :: Text -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve content = case parseOnly parseRanges content of
   Left err -> Left err
   Right result -> Right (solveInternal result)
@@ -38,18 +37,27 @@ invalidIDs (lower, upper) = filter isInvalidID [lower .. upper]
 
 isInvalidID :: MyInt -> Bool
 isInvalidID x =
-  let s = intToText x
-      (q, r) = T.length s `divMod` 2
-   in r == 0 && T.take q s == T.drop q s
+  let s = intToLazyBS x
+      (q, r) = BL.length s `divMod` 2
+   in r == 0 && BL.take q s == BL.drop q s
 
 invalidIDsPart2 :: (MyInt, MyInt) -> [MyInt]
 invalidIDsPart2 (lower, upper) = filter isInvalidIDPart2 [lower .. upper]
 
 isInvalidIDPart2 :: MyInt -> Bool
 isInvalidIDPart2 x =
-  let s = intToText x
-      n = T.length s
+  let s = intToLazyBS x
+      n = fromIntegral (BL.length s)
       indices = [i | i <- [1 .. n `div` 2], n `mod` i == 0]
-      candidates = map (\i -> (n `div` i, T.take i s)) indices
-      candidates' = map (uncurry T.replicate) candidates
+      candidates = map (\i -> (n `div` i, BL.take i s)) indices
+      candidates' = map (\(i, bs) -> replicateBS (fromIntegral i) bs) candidates
    in isJust (find (== s) candidates')
+
+intToLazyBS :: Int -> BL.ByteString
+intToLazyBS = BB.toLazyByteString . BB.intDec
+
+replicateBS :: Int -> BL.ByteString -> BL.ByteString
+replicateBS n bs = case n of
+  0 -> mempty
+  1 -> bs
+  _ -> bs <> replicateBS (n - 1) bs

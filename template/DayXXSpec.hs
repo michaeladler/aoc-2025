@@ -1,6 +1,6 @@
 module DayXXSpec (spec) where
 
-import qualified Data.Text as T
+import qualified Data.ByteString.Char8 as C
 import DayXX (solve)
 import Test.Hspec
 
@@ -10,7 +10,7 @@ spec = do
     it "should solve the example" $ do
       solve exampleInput `shouldBe` Right (0, 0)
 
-exampleInput :: T.Text
+exampleInput :: C.ByteString
 exampleInput =
   """
   987654321111111
