@@ -8,12 +8,12 @@ maintainer: Michael Adler
 ghc-options: -Wall
 
 dependencies:
-   - base
    - attoparsec
-   - matrix
-   - vector
-   - unordered-containers
+   - base
    - bytestring
+   - matrix
+   - unordered-containers
+   - vector
 
 default-extensions:
   - OverloadedStrings

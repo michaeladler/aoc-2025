@@ -7,6 +7,7 @@ import Day03
 import Day04
 import Day05
 import Day06
+import Day07
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -26,6 +27,7 @@ runDay 3 = solveDay Day03.solve "input/03.txt"
 runDay 4 = solveDay Day04.solve "input/04.txt"
 runDay 5 = solveDay Day05.solve "input/05.txt"
 runDay 6 = solveDay Day06.solve "input/06.txt"
+runDay 7 = solveDay Day07.solve "input/07.txt"
 runDay _ = putStrLn "Day not implemented yet."
 
 solveDay :: (Show a) => (C.ByteString -> Either String a) -> FilePath -> IO ()
