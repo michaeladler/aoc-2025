@@ -7,7 +7,7 @@ spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve' (inputParser exampleInput) 10 `shouldBe` (40, 0)
+      solve' (inputParser exampleInput) 10 `shouldBe` (40, 25272)
   where
     exampleInput =
       """

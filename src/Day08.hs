@@ -1,17 +1,16 @@
-module Day08 where
+module Day08 (solve, solve', inputParser) where
 
 import AocUtils (choose2, sortDesc)
 import qualified Data.ByteString.Char8 as C
 import qualified Data.DisjointSet as DS
-import Data.Int (Int32, Int64)
+import Data.Int (Int64)
 import Data.List (sort)
 import Data.Maybe (mapMaybe)
 
 newtype Point = Point (Int64, Int64, Int64)
   deriving (Eq, Show, Ord)
 
--- part1: 9600 is too low
-solve :: C.ByteString -> Either String (Int, Int32)
+solve :: C.ByteString -> Either String (Int, Int64)
 solve content = Right (solve' (inputParser content) 1000)
 
 inputParser :: C.ByteString -> [Point]
@@ -21,12 +20,18 @@ inputParser input = mapMaybe parsePoint (C.split '\n' input)
       [Just x, Just y, Just z] -> Just (Point (x, y, z))
       _ -> Nothing
 
-solve' :: [Point] -> Int -> (Int, Int32)
+solve' :: [Point] -> Int -> (Int, Int64)
 solve' input k =
-  let shortest = take k $ sortByDist input
-      ds = foldl' (\ds' (x, y) -> DS.union x y ds') DS.empty shortest
+  let sorted = sortByDist input
+      ds = foldl' (\ds' (p, q) -> DS.union p q ds') DS.empty (take k sorted)
       part1 = product $ take 3 (sortDesc (map length (DS.toLists ds)))
-   in (part1, 0)
+
+      allDisjoint = foldl' (flip DS.insert) DS.empty input :: DS.DisjointSet Point
+      initial = (allDisjoint, Point (0, 0, 0), Point (0, 0, 0))
+      folded = scanl (\(ds', _, _) (p, q) -> (DS.union p q ds', p, q)) initial sorted
+      folded' = map (\(ds', p, q) -> (DS.sets ds', p, q)) folded
+      (_, Point (x, _, _), Point (x', _, _)) = head $ filter (\(ds', _, _) -> ds' == 1) folded'
+   in (part1, x * x')
 
 distSquared :: Point -> Point -> Int64
 distSquared (Point (x, y, z)) (Point (x', y', z')) =
@@ -41,33 +46,3 @@ sortByDist points =
       candidatesWithDist = map (\(p, q) -> (distSquared p q, p, q)) candidates
       sorted = sort candidatesWithDist
    in map (\(_, p, q) -> (p, q)) sorted
-
--- Experimental Area
-example :: [Point]
-example = inputParser exampleInput
-
-exampleInput :: C.ByteString
-exampleInput =
-  """
-  162,817,812
-  57,618,57
-  906,360,560
-  592,479,940
-  352,342,300
-  466,668,158
-  542,29,236
-  431,825,988
-  739,650,466
-  52,470,668
-  216,146,977
-  819,987,18
-  117,168,530
-  805,96,715
-  346,949,466
-  970,615,88
-  941,993,340
-  862,61,35
-  984,92,344
-  425,690,689
-
-  """
