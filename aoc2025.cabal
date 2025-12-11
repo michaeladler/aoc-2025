@@ -15,6 +15,7 @@ build-type:     Simple
 
 library
   exposed-modules:
+      AocUtils
       Day01
       Day02
       Day03
@@ -22,6 +23,7 @@ library
       Day05
       Day06
       Day07
+      Day08
   other-modules:
       Paths_aoc2025
   hs-source-dirs:
@@ -34,6 +36,7 @@ library
       attoparsec
     , base
     , bytestring
+    , disjoint-containers
     , matrix
     , unordered-containers
     , vector
@@ -54,6 +57,7 @@ executable aoc2025
     , attoparsec
     , base
     , bytestring
+    , disjoint-containers
     , matrix
     , unordered-containers
     , vector
@@ -70,6 +74,7 @@ test-suite spec
       Day05Spec
       Day06Spec
       Day07Spec
+      Day08Spec
       Paths_aoc2025
   hs-source-dirs:
       test
@@ -82,6 +87,7 @@ test-suite spec
     , attoparsec
     , base
     , bytestring
+    , disjoint-containers
     , hspec ==2.*
     , matrix
     , unordered-containers
