@@ -14,6 +14,7 @@ dependencies:
    - matrix
    - unordered-containers
    - vector
+   - pretty-simple
    - disjoint-containers
 
 default-extensions:

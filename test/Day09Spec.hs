@@ -7,7 +7,7 @@ spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve exampleInput `shouldBe` Right (50, 0)
+      solve exampleInput `shouldBe` Right (50, 24)
   where
     exampleInput =
       """
