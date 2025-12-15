@@ -21,6 +21,7 @@ dependencies:
 default-extensions:
   - OverloadedStrings
   - MultilineStrings
+  - TupleSections
 
 executable:
   main: Main.hs

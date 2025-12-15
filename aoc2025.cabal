@@ -25,6 +25,7 @@ library
       Day07
       Day08
       Day09
+      Day10
   other-modules:
       Paths_aoc2025
   hs-source-dirs:
@@ -32,6 +33,7 @@ library
   default-extensions:
       OverloadedStrings
       MultilineStrings
+      TupleSections
   ghc-options: -Wall
   build-depends:
       attoparsec
@@ -54,6 +56,7 @@ executable aoc2025
   default-extensions:
       OverloadedStrings
       MultilineStrings
+      TupleSections
   ghc-options: -Wall -O2
   build-depends:
       aoc2025
@@ -81,12 +84,14 @@ test-suite spec
       Day07Spec
       Day08Spec
       Day09Spec
+      Day10Spec
       Paths_aoc2025
   hs-source-dirs:
       test
   default-extensions:
       OverloadedStrings
       MultilineStrings
+      TupleSections
   ghc-options: -Wall
   build-depends:
       aoc2025
