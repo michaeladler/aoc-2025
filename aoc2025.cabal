@@ -37,6 +37,7 @@ library
       attoparsec
     , base
     , bytestring
+    , containers
     , disjoint-containers
     , matrix
     , pretty-simple
@@ -59,6 +60,7 @@ executable aoc2025
     , attoparsec
     , base
     , bytestring
+    , containers
     , disjoint-containers
     , matrix
     , pretty-simple
@@ -91,6 +93,7 @@ test-suite spec
     , attoparsec
     , base
     , bytestring
+    , containers
     , disjoint-containers
     , hspec ==2.*
     , matrix

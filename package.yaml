@@ -13,6 +13,7 @@ dependencies:
    - bytestring
    - matrix
    - unordered-containers
+   - containers
    - vector
    - pretty-simple
    - disjoint-containers

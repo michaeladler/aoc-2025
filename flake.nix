@@ -30,6 +30,7 @@
             pkgs.cabal2nix
             pkgs.hpack
             pkgs.haskell.packages.ghc912.haskell-language-server
+            pkgs.poop
           ];
 
           # Extra arguments are added to mkDerivation's arguments as-is.
