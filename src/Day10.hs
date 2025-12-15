@@ -25,17 +25,16 @@ instance Show Lights where
       bitChar i = if testBit (bits l) i then '#' else '.'
 
 solve :: BS.ByteString -> Either String (Int, Int)
-solve input = case parseInput input of
+solve input = case parseOnly tcParser input of
   Left err -> Left err
-  Right tcs -> Right $ solveInternal tcs
+  Right tcs -> Right $ solve' tcs
 
-solveInternal :: [TC] -> (Int, Int)
-solveInternal tcs = (sum $ map (\(lights, buttons, _) -> bfsPart1 lights buttons) tcs, 0)
+solve' :: [TC] -> (Int, Int)
+solve' tcs = (sum (map bfsPart1 tcs), 0)
 
-bfsPart1 :: Lights -> Buttons -> Int
-bfsPart1 target buttons = go (Seq.singleton (0, 0)) HashSet.empty
+bfsPart1 :: TC -> Int
+bfsPart1 (target, buttons, _) = go (Seq.singleton (0, 0)) HashSet.empty
   where
-    neighbors :: Word16 -> Seq Word16
     neighbors lights = fmap (toggleBits lights) buttons
 
     go :: Seq (Word16, Int) -> HashSet Word16 -> Int
@@ -50,54 +49,25 @@ bfsPart1 target buttons = go (Seq.singleton (0, 0)) HashSet.empty
            in go newQueue newVisited
 
 toggleBits :: Word16 -> [Int] -> Word16
-toggleBits n is = n `xor` mask
-  where
-    mask = foldr (\k acc -> acc .|. (1 `shiftL` k)) 0 is
-
-parseInput :: BS.ByteString -> Either String [TC]
-parseInput = parseOnly tcParser
+toggleBits n is = let mask = foldr (\k acc -> acc .|. (1 `shiftL` k)) 0 is in n `xor` mask
 
 tcParser :: Parser [TC]
 tcParser = lineParser `sepBy` endOfLine
 
 lineParser :: Parser TC
-lineParser = do
-  lights <- lightsParser
-  _ <- char ' '
-  buttons <- buttonsParser
-  _ <- char ' '
-  joltages <- joltageParser
-  pure (lights, buttons, joltages)
+lineParser = (,,) <$> lightsParser <* char ' ' <*> buttonsParser <* char ' ' <*> joltageParser
 
 buttonsParser :: Parser Buttons
-buttonsParser = Seq.fromList <$> many' parseGroup
-  where
-    parseGroup :: Parser [Int]
-    parseGroup = skipSpace *> char '(' *> (decimal `sepBy` char ',') <* char ')'
+buttonsParser = Seq.fromList <$> many' (skipSpace *> char '(' *> (decimal `sepBy` char ',') <* char ')')
 
 lightsParser :: Parser Lights
-lightsParser = do
-  _ <- char '['
-  bs <- takeWhile1 (\c -> c == '#' || c == '.')
-  _ <- char ']'
-  return (parseLights bs)
+lightsParser = parseLights <$> (char '[' *> takeWhile1 (\c -> c == '#' || c == '.') <* char ']')
 
 joltageParser :: Parser Joltages
-joltageParser = do
-  _ <- char '{'
-  xs <- decimal `sepBy` char ','
-  _ <- char '}'
-  return xs
+joltageParser = char '{' *> decimal `sepBy` char ',' <* char '}'
 
 parseLights :: BS.ByteString -> Lights
-parseLights bs =
-  let n = BS.length bs
-   in Lights {bits = parseBits bs, size = n}
-  where
-    parseBits :: BS.ByteString -> Word16
-    parseBits = BS.foldr step 0
-      where
-        step c acc = acc * 2 + if c == '#' then 1 else 0
+parseLights bs = Lights {bits = BS.foldr (\c acc -> acc * 2 + if c == '#' then 1 else 0) 0 bs, size = BS.length bs}
 
 -- Experimental Area
 example :: [TC]
