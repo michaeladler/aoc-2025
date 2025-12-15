@@ -55,6 +55,8 @@
               pkgs.poop
             ];
 
+            buildInputs = [ pkgs.z3 ];
+
             # Extra arguments are added to mkDerivation's arguments as-is.
             # Since it adds all passed arguments to the shell environment,
             # we can use this to set the environment variable the `Paths_`
@@ -80,6 +82,8 @@
               pkgs.haskell.packages.ghc912.haskell-language-server
               pkgs.poop
             ];
+
+            buildInputs = [ pkgs.z3 ];
 
             # Extra arguments are added to mkDerivation's arguments as-is.
             # Since it adds all passed arguments to the shell environment,

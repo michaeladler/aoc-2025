@@ -15,13 +15,15 @@ dependencies:
    - unordered-containers
    - containers
    - vector
-   - pretty-simple
-   - disjoint-containers
+   - pretty-simple # just for debugging purposes
+   - disjoint-containers # day 8
+   - z3 # day 10
 
 default-extensions:
   - OverloadedStrings
   - MultilineStrings
   - TupleSections
+  - LambdaCase
 
 executable:
   main: Main.hs

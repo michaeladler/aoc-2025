@@ -1,6 +1,6 @@
 { mkDerivation, attoparsec, base, bytestring, containers
 , disjoint-containers, hspec, hspec-discover, lib, matrix
-, pretty-simple, unordered-containers, vector
+, pretty-simple, unordered-containers, vector, z3
 }:
 mkDerivation {
   pname = "aoc2025";
@@ -10,15 +10,15 @@ mkDerivation {
   isExecutable = true;
   libraryHaskellDepends = [
     attoparsec base bytestring containers disjoint-containers matrix
-    pretty-simple unordered-containers vector
+    pretty-simple unordered-containers vector z3
   ];
   executableHaskellDepends = [
     attoparsec base bytestring containers disjoint-containers matrix
-    pretty-simple unordered-containers vector
+    pretty-simple unordered-containers vector z3
   ];
   testHaskellDepends = [
     attoparsec base bytestring containers disjoint-containers hspec
-    matrix pretty-simple unordered-containers vector
+    matrix pretty-simple unordered-containers vector z3
   ];
   testToolDepends = [ hspec-discover ];
   license = lib.licenses.mit;

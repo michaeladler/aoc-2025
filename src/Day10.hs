@@ -1,14 +1,19 @@
 module Day10 (solve, Lights (..), parseLights, tcParser, toggleBits) where
 
+import Control.Monad.IO.Class (liftIO)
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly, sepBy, skipSpace, takeWhile1)
 import Data.Bits (shiftL, testBit, xor, (.|.))
 import qualified Data.ByteString.Char8 as BS
-import Data.Either (fromRight)
+import Data.Foldable (toList)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
-import Data.Sequence (Seq, (><))
+import Data.Maybe (catMaybes)
+import Data.Sequence (Seq (..), (><))
 import qualified Data.Sequence as Seq
+import qualified Data.Traversable as T
 import Data.Word (Word16)
+import System.IO.Unsafe (unsafePerformIO)
+import Z3.Monad
 
 type Buttons = Seq [Int]
 
@@ -24,13 +29,13 @@ instance Show Lights where
     where
       bitChar i = if testBit (bits l) i then '#' else '.'
 
-solve :: BS.ByteString -> Either String (Int, Int)
+solve :: BS.ByteString -> Either String (Int, Integer)
 solve input = case parseOnly tcParser input of
   Left err -> Left err
   Right tcs -> Right $ solve' tcs
 
-solve' :: [TC] -> (Int, Int)
-solve' tcs = (sum (map bfsPart1 tcs), 0)
+solve' :: [TC] -> (Int, Integer)
+solve' tcs = (sum (map bfsPart1 tcs), sum (map part2 tcs))
 
 bfsPart1 :: TC -> Int
 bfsPart1 (target, buttons, _) = go (Seq.singleton (0, 0)) HashSet.empty
@@ -51,6 +56,9 @@ bfsPart1 (target, buttons, _) = go (Seq.singleton (0, 0)) HashSet.empty
 toggleBits :: Word16 -> [Int] -> Word16
 toggleBits n is = let mask = foldr (\k acc -> acc .|. (1 `shiftL` k)) 0 is in n `xor` mask
 
+part2 :: TC -> Integer
+part2 tc = sum (runZ3 (script tc))
+
 tcParser :: Parser [TC]
 tcParser = lineParser `sepBy` endOfLine
 
@@ -69,12 +77,51 @@ joltageParser = char '{' *> decimal `sepBy` char ',' <* char '}'
 parseLights :: BS.ByteString -> Lights
 parseLights bs = Lights {bits = BS.foldr (\c acc -> acc * 2 + if c == '#' then 1 else 0) 0 bs, size = BS.length bs}
 
--- Experimental Area
-example :: [TC]
-example = fromRight [] $ parseOnly tcParser exampleInput
-  where
-    exampleInput =
-      """
-      [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
+-- Take the first example in the sample:
+-- [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
+--         a    b    c    d    e      f
+-- This is just a set of equations:
+-- buttons = [a,b,c,d,e,f]
+--           [0,1,2,3,4,5]
+--
+-- e + f = 3
+-- b + f = 5
+-- c + d + e = 4
+-- a + b + d = 7
+--
+-- desired solution is [a,b,c,d,e,f] = [1,3,3,1,2]
+--
+-- and the solution is to minimize the sum of the variables, each of which must be positive.
+script :: TC -> Z3 [Integer]
+script (_, buttons, joltages) = do
+  -- Create integer variables for each button
+  buttonVars <- mapM (mkFreshIntVar . (\i -> 'b' : show i)) [0 .. (Seq.length buttons - 1)]
+  zero <- mkInteger 0
 
-      """
+  -- Constraints: variables are positive
+  optimizeAssert =<< mkAnd =<< T.sequence [mkGe v zero | v <- buttonVars]
+
+  -- For each voltage constraint
+  tmp <- T.forM (zip [0 ..] joltages) $ \(i, joltage) -> do
+    let vvars = [buttonVars !! j | (j, button) <- zip [0 ..] (toList buttons), i `elem` button]
+    sumVars <- mkAdd vvars
+    target <- mkInteger (fromIntegral joltage)
+    mkEq sumVars target
+  optimizeAssert =<< mkAnd tmp
+
+  -- -- Minimize the sum of the button presses
+  _ <- optimizeMinimize =<< mkAdd buttonVars
+  model <- optimizeRun
+  catMaybes <$> mapM (evalInt model) buttonVars
+
+optimizeRun :: Z3 Model
+optimizeRun = do
+  optimizeCheck [] >>= \case
+    Sat -> pure ()
+    r -> do
+      liftIO . putStrLn =<< optimizeToString
+      error $ show r
+  optimizeGetModel
+
+runZ3 :: Z3 a -> a
+runZ3 = unsafePerformIO . evalZ3

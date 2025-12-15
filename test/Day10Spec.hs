@@ -30,7 +30,7 @@ spec = do
 
   describe "solve" $ do
     it "should solve the example" $ do
-      solve exampleInput `shouldBe` Right (7, 0)
+      solve exampleInput `shouldBe` Right (7, 33)
 
 exampleInput :: BS.ByteString
 exampleInput =
