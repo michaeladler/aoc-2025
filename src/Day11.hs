@@ -1,12 +1,10 @@
-module Day11 where
+module Day11 (solve) where
 
+import Data.Array (Array, bounds, listArray, range, (!))
 import Data.Attoparsec.ByteString.Char8 (Parser, char, endOfLine, isSpace, parseOnly, sepBy, sepBy1, skipSpace, takeTill)
 import qualified Data.ByteString.Char8 as C
-import Data.Either (fromRight)
 import Data.Graph (Graph, Vertex, graphFromEdges)
-import Data.Array
-
-type MyInt = Int
+import Data.Int (Int64)
 
 type Label = C.ByteString
 
@@ -14,7 +12,7 @@ type Targets = [C.ByteString]
 
 type AocInput = [(Label, Targets)]
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either String (Maybe Int64, Maybe Int64)
 solve content = case parseOnly inputParser content of
   Left err -> Left err
   Right result -> Right (solve' result)
@@ -25,54 +23,43 @@ inputParser = lineParser `sepBy` endOfLine
 lineParser :: Parser (Label, Targets)
 lineParser = do
   label <- takeTill (== ':')
-  _ <- char ':'
-  skipSpace
+  char ':' >> skipSpace
   targets <- sepBy1 (takeTill isSpace) (char ' ' >> skipSpace)
   pure (label, targets)
 
 buildGraph :: AocInput -> (Graph, Vertex -> (Label, Label, Targets), Label -> Maybe Vertex)
-buildGraph input = 
-    let input' = ("out", []) : input in 
-    graphFromEdges (map (\(x, xs) -> (x, x, xs)) input')
+buildGraph input =
+  let input' = ("out", []) : input
+   in graphFromEdges (map (\(x, xs) -> (x, x, xs)) input')
 
-solve' :: AocInput -> (MyInt, MyInt)
+solve' :: AocInput -> (Maybe Int64, Maybe Int64)
 solve' input =
   let (graph, _nodeFromVertex, vertexFromKey) = buildGraph input
-      (you, out) = case (vertexFromKey "you", vertexFromKey "out") of
-        (Just you', Just out') -> (you', out')
-        _ -> error "\"you\" and/or \"out\" not found"
-      part1 = length (allSimplePaths graph you out)
-   in (part1, 0)
+      part1 = case (vertexFromKey "you", vertexFromKey "out") of
+        (Just you, Just out) -> Just $ countPaths graph you out
+        _ -> Nothing
 
-allSimplePaths :: Graph -> Vertex -> Vertex -> [[Vertex]]
-allSimplePaths graph start goal = go start []
+      -- it turns out there are no paths from dac to fft
+      -- we have to go: svr -> fft -> dac -> out
+      part2 = case (vertexFromKey "svr", vertexFromKey "out", vertexFromKey "dac", vertexFromKey "fft") of
+        (Just svr, Just out, Just dac, Just fft) ->
+          Just $ countPaths graph svr fft * countPaths graph fft dac * countPaths graph dac out
+        _ -> Nothing
+   in (part1, part2)
+
+countPaths :: Graph -> Vertex -> Vertex -> Int64
+countPaths graph start goal = memo ! start
   where
-    neighbors curr = graph ! curr
-    go curr path
-      | curr == goal = [reverse (curr : path)]
-      | otherwise =
-          concat
-            [ go next (curr : path)
-            | next <- neighbors curr,
-              next `notElem` path -- Avoid cycles in this path
-            ]
+    bnds = bounds graph
 
--- Experimental Area
-example :: AocInput
-example = fromRight [] $ parseOnly inputParser exampleInput
+    -- Define the lazy cache (Array):
+    -- 'memo' creates an array where every index 'v' contains the result of 'go v'
+    memo :: Array Vertex Int64
+    memo = listArray bnds [go v | v <- range bnds]
 
-exampleInput :: C.ByteString
-exampleInput =
-  """
-  aaa: you hhh
-  you: bbb ccc
-  bbb: ddd eee
-  ccc: ddd eee fff
-  ddd: ggg
-  eee: out
-  fff: out
-  ggg: out
-  hhh: ccc fff iii
-  iii: out
-
-  """
+    -- 3. The Logic Function
+    -- Instead of recursing via 'countPaths', we look up the result in 'memo'
+    go :: Vertex -> Int64
+    go current
+      | current == goal = 1
+      | otherwise = sum [memo ! neighbor | neighbor <- graph ! current]
