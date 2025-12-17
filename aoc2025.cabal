@@ -26,6 +26,7 @@ library
       Day08
       Day09
       Day10
+      Day11
   other-modules:
       Paths_aoc2025
   hs-source-dirs:
@@ -37,7 +38,8 @@ library
       LambdaCase
   ghc-options: -Wall
   build-depends:
-      attoparsec
+      array
+    , attoparsec
     , base
     , bytestring
     , containers
@@ -63,6 +65,7 @@ executable aoc2025
   ghc-options: -Wall -O2
   build-depends:
       aoc2025
+    , array
     , attoparsec
     , base
     , bytestring
@@ -89,6 +92,7 @@ test-suite spec
       Day08Spec
       Day09Spec
       Day10Spec
+      Day11Spec
       Paths_aoc2025
   hs-source-dirs:
       test
@@ -100,6 +104,7 @@ test-suite spec
   ghc-options: -Wall
   build-depends:
       aoc2025
+    , array
     , attoparsec
     , base
     , bytestring

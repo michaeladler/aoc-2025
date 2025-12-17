@@ -1,16 +1,17 @@
 module Main where
 
 import qualified Data.ByteString.Char8 as C
-import Day01
-import Day02
-import Day03
-import Day04
-import Day05
-import Day06
-import Day07
-import Day08
-import Day09
-import Day10
+import qualified Day01
+import qualified Day02
+import qualified Day03
+import qualified Day04
+import qualified Day05
+import qualified Day06
+import qualified Day07
+import qualified Day08
+import qualified Day09
+import qualified Day10
+import qualified Day11
 import System.Environment (getArgs)
 
 main :: IO ()
@@ -34,6 +35,7 @@ runDay 7 = solveDay Day07.solve "input/07.txt"
 runDay 8 = solveDay Day08.solve "input/08.txt"
 runDay 9 = solveDay Day09.solve "input/09.txt"
 runDay 10 = solveDay Day10.solve "input/10.txt"
+runDay 11 = solveDay Day11.solve "input/11.txt"
 runDay _ = putStrLn "Day not implemented yet."
 
 solveDay :: (Show a) => (C.ByteString -> Either String a) -> FilePath -> IO ()

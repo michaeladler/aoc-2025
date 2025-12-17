@@ -14,10 +14,11 @@ dependencies:
    - matrix
    - unordered-containers
    - containers
-   - vector
+   - vector # Vector is a "better" Array
+   - array # Arrays are not for the faint of heart
    - pretty-simple # just for debugging purposes
    - disjoint-containers # day 8
-   - z3 # day 10
+   - z3 # day 10, painful to use
 
 default-extensions:
   - OverloadedStrings

@@ -1,39 +1,52 @@
-module DayXX (solve) where
+module DayXX where
 
-import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly, sepBy, many1)
-import Data.Either (fromRight)
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, isSpace, many', many1, parseOnly, sepBy, sepBy1, skipSpace, takeTill)
 import qualified Data.ByteString.Char8 as C
+import Data.Either (fromRight)
 
 type MyInt = Int
+
+type Label = C.ByteString
+
+type Targets = [C.ByteString]
+
+type AocInput = [(Label, Targets)]
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
 solve content = case parseOnly inputParser content of
   Left err -> Left err
-  Right result -> Right (solveInternal result)
+  Right result -> Right (solve' result)
 
-inputParser :: Parser [[MyInt]]
-inputParser = many1 decimal `sepBy` endOfLine
+inputParser :: Parser AocInput
+inputParser = lineParser `sepBy` endOfLine
 
-solveInternal :: [[MyInt]] -> (MyInt, MyInt)
-solveInternal input = (0, 0)
+lineParser :: Parser (Label, Targets)
+lineParser = do
+  label <- takeTill (== ':')
+  _ <- char ':'
+  skipSpace
+  targets <- sepBy1 (takeTill isSpace) (char ' ' >> skipSpace)
+  pure (label, targets)
+
+solve' :: AocInput -> (MyInt, MyInt)
+solve' input = (0, 0)
 
 -- Experimental Area
-example :: [[MyInt]]
+example :: AocInput
 example = fromRight [] $ parseOnly inputParser exampleInput
 
 exampleInput :: C.ByteString
 exampleInput =
   """
-  3-5
-  10-14
-  16-20
-  12-18
-
-  1
-  5
-  8
-  11
-  17
-  32
+  aaa: you hhh
+  you: bbb ccc
+  bbb: ddd eee
+  ccc: ddd eee fff
+  ddd: ggg
+  eee: out
+  fff: out
+  ggg: out
+  hhh: ccc fff iii
+  iii: out
 
   """
