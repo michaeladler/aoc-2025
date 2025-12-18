@@ -13,9 +13,7 @@ type Targets = [C.ByteString]
 type AocInput = [(Label, Targets)]
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = case parseOnly inputParser content of
-  Left err -> Left err
-  Right result -> Right (solve' result)
+solve input = solve' <$> parseOnly inputParser input
 
 inputParser :: Parser AocInput
 inputParser = lineParser `sepBy` endOfLine

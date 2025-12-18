@@ -10,9 +10,7 @@ import Data.Maybe (isJust)
 type MyInt = Int
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = case parseOnly parseRanges content of
-  Left err -> Left err
-  Right result -> Right (solveInternal result)
+solve content = solveInternal <$> parseOnly parseRanges content
 
 -- Parse a single range like "11-22"
 parseRange :: Parser (MyInt, MyInt)

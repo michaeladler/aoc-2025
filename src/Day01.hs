@@ -14,10 +14,7 @@ newtype Command = Command (Direction, MyInt)
   deriving (Show, Eq)
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = do
-  case parseCommands content of
-    Left err -> Left err
-    Right result -> Right (solveInternal result)
+solve content = solveInternal <$> parseCommands content
 
 parseCommands :: C.ByteString -> Either String [Command]
 parseCommands = parseOnly (many' commandParser)

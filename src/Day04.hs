@@ -14,9 +14,7 @@ data Cell = Empty | Paper
 type Grid = HashSet (Int, Int) -- first int is row, second is col
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve input = case parseInput input of
-  Left err -> Left err
-  Right result -> Right (solveInternal result)
+solve input = solveInternal <$> parseInput input
 
 parseInput :: C.ByteString -> Either String [[Cell]]
 parseInput = parseOnly parseInput'

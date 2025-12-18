@@ -30,9 +30,7 @@ instance Show Lights where
       bitChar i = if testBit (bits l) i then '#' else '.'
 
 solve :: BS.ByteString -> Either String (Int, Integer)
-solve input = case parseOnly tcParser input of
-  Left err -> Left err
-  Right tcs -> Right $ solve' tcs
+solve input = solve' <$> parseOnly tcParser input
 
 solve' :: [TC] -> (Int, Integer)
 solve' tcs = (sum (map bfsPart1 tcs), sum (map part2 tcs))

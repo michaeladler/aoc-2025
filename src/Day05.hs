@@ -11,9 +11,7 @@ newtype Interval = Interval (MyInt, MyInt)
   deriving (Eq, Show)
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = case parseOnly parseInput content of
-  Left err -> Left err
-  Right result -> Right (solveInternal result)
+solve content = solveInternal <$> parseOnly parseInput content
 
 parseInput :: Parser ([Interval], [MyInt])
 parseInput = do

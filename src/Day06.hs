@@ -15,9 +15,9 @@ data BinOp = Plus | Mul
   deriving (Eq, Show)
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = case parseOnly parseInput content of
-  Left err -> Left err
-  Right (numbers, ops) -> Right (solvePart1 numbers ops, solvePart2 content ops)
+solve content =
+  parseOnly parseInput content >>= \(numbers, ops) ->
+    Right (solvePart1 numbers ops, solvePart2 content ops)
 
 parseInput :: Parser ([[MyInt]], [BinOp])
 parseInput = do

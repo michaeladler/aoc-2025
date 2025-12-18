@@ -13,24 +13,21 @@ type Targets = [C.ByteString]
 type AocInput = [(Label, Targets)]
 
 solve :: C.ByteString -> Either String (Maybe Int64, Maybe Int64)
-solve content = case parseOnly inputParser content of
-  Left err -> Left err
-  Right result -> Right (solve' result)
+solve content = solve' <$> parseOnly inputParser content
 
 inputParser :: Parser AocInput
 inputParser = lineParser `sepBy` endOfLine
 
 lineParser :: Parser (Label, Targets)
-lineParser = do
-  label <- takeTill (== ':')
-  char ':' >> skipSpace
-  targets <- sepBy1 (takeTill isSpace) (char ' ' >> skipSpace)
-  pure (label, targets)
+lineParser =
+  (,)
+    <$> takeTill (== ':')
+    <* char ':'
+    <* skipSpace
+    <*> sepBy1 (takeTill isSpace) (char ' ' >> skipSpace)
 
 buildGraph :: AocInput -> (Graph, Vertex -> (Label, Label, Targets), Label -> Maybe Vertex)
-buildGraph input =
-  let input' = ("out", []) : input
-   in graphFromEdges (map (\(x, xs) -> (x, x, xs)) input')
+buildGraph input = graphFromEdges (map (\(x, xs) -> (x, x, xs)) (("out", []) : input))
 
 solve' :: AocInput -> (Maybe Int64, Maybe Int64)
 solve' input =

@@ -21,7 +21,7 @@ type Polygon = (IntMap [Point], IntMap [Point]) -- (vertical, horizontal) lines;
 type RasterizedPolygon = (IntMap IntSet, IntMap IntSet) -- polygon with lines replaced by individual points
 
 solve :: C.ByteString -> Either String (Int64, Int64)
-solve content = Right (solveInternal (inputParser content))
+solve content = Right $ solveInternal (inputParser content)
 
 inputParser :: C.ByteString -> [Point]
 inputParser bs = map parsePoint (filter (not . C.null) (C.split '\n' bs))

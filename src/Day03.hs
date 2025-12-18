@@ -8,9 +8,7 @@ import qualified Data.List as List
 type MyInt = Int
 
 solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = case parseOnly parseInput content of
-  Left err -> Left err
-  Right result -> Right (solveInternal result)
+solve content = solveInternal <$> parseOnly parseInput content
 
 parseInput :: Parser [[MyInt]]
 parseInput = many1 (digitToInt <$> digit) `sepBy` endOfLine
