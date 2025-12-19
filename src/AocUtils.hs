@@ -1,7 +1,7 @@
 module AocUtils where
 
 import Data.List (sortBy, tails)
-import Data.Ord (Down (..), comparing)
+import Data.Ord (Down (..), Ord, comparing)
 
 -- | Generate all unique unordered pairs from a list.
 -- Each pair (x, y) consists of two distinct elements from the input list,

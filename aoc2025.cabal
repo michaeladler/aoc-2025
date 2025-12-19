@@ -32,6 +32,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      NoImplicitPrelude
       OverloadedStrings
       MultilineStrings
       TupleSections
@@ -43,9 +44,11 @@ library
     , base
     , bytestring
     , containers
+    , directory
     , disjoint-containers
     , matrix
     , pretty-simple
+    , protolude
     , unordered-containers
     , vector
     , z3
@@ -58,6 +61,7 @@ executable aoc2025
   hs-source-dirs:
       app
   default-extensions:
+      NoImplicitPrelude
       OverloadedStrings
       MultilineStrings
       TupleSections
@@ -70,9 +74,11 @@ executable aoc2025
     , base
     , bytestring
     , containers
+    , directory
     , disjoint-containers
     , matrix
     , pretty-simple
+    , protolude
     , unordered-containers
     , vector
     , z3
@@ -97,6 +103,7 @@ test-suite spec
   hs-source-dirs:
       test
   default-extensions:
+      NoImplicitPrelude
       OverloadedStrings
       MultilineStrings
       TupleSections
@@ -109,10 +116,12 @@ test-suite spec
     , base
     , bytestring
     , containers
+    , directory
     , disjoint-containers
     , hspec ==2.*
     , matrix
     , pretty-simple
+    , protolude
     , unordered-containers
     , vector
     , z3

@@ -4,13 +4,12 @@ import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, parseOnly, sepBy
 import qualified Data.ByteString.Builder as BB
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Lazy as BL
-import Data.Foldable (find)
-import Data.Maybe (isJust)
+import Protolude
 
 type MyInt = Int
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = solveInternal <$> parseOnly parseRanges content
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
+solve = fmap solveInternal . first toS . parseOnly parseRanges
 
 -- Parse a single range like "11-22"
 parseRange :: Parser (MyInt, MyInt)

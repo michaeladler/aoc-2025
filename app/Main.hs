@@ -12,7 +12,7 @@ import qualified Day08
 import qualified Day09
 import qualified Day10
 import qualified Day11
-import System.Environment (getArgs)
+import Protolude
 
 main :: IO ()
 main = do
@@ -21,8 +21,8 @@ main = do
     (dayStr : _) ->
       case reads dayStr of
         [(day, _)] -> runDay day
-        _ -> putStrLn "Invalid day argument. Please provide a valid integer."
-    _ -> putStrLn "Please provide a day number as the first argument."
+        _ -> putText "Invalid day argument. Please provide a valid integer."
+    _ -> putText "Please provide a day number as the first argument."
 
 runDay :: Int -> IO ()
 runDay 1 = solveDay Day01.solve "input/01.txt"
@@ -36,9 +36,9 @@ runDay 8 = solveDay Day08.solve "input/08.txt"
 runDay 9 = solveDay Day09.solve "input/09.txt"
 runDay 10 = solveDay Day10.solve "input/10.txt"
 runDay 11 = solveDay Day11.solve "input/11.txt"
-runDay _ = putStrLn "Day not implemented yet."
+runDay _ = putText "Day not implemented yet."
 
-solveDay :: (Show a) => (C.ByteString -> Either String a) -> FilePath -> IO ()
+solveDay :: (Show a) => (C.ByteString -> Either Text a) -> FilePath -> IO ()
 solveDay solver fileName = do
   content <- C.readFile fileName
   case solver content of

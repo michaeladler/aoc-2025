@@ -2,29 +2,20 @@ module DayXX where
 
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, isSpace, many', many1, parseOnly, sepBy, sepBy1, skipSpace, takeTill)
 import qualified Data.ByteString.Char8 as C
-import Data.Either (fromRight)
+import Protolude
 
 type MyInt = Int
 
-type Label = C.ByteString
+type AocInput = [[MyInt]]
 
-type Targets = [C.ByteString]
-
-type AocInput = [(Label, Targets)]
-
-solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve input = solve' <$> parseOnly inputParser input
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
+solve input = solve' <$> first toS (parseOnly inputParser input)
 
 inputParser :: Parser AocInput
 inputParser = lineParser `sepBy` endOfLine
 
-lineParser :: Parser (Label, Targets)
-lineParser = do
-  label <- takeTill (== ':')
-  _ <- char ':'
-  skipSpace
-  targets <- sepBy1 (takeTill isSpace) (char ' ' >> skipSpace)
-  pure (label, targets)
+lineParser :: Parser [MyInt]
+lineParser = decimal `sepBy` char ','
 
 solve' :: AocInput -> (MyInt, MyInt)
 solve' input = (0, 0)
@@ -36,15 +27,7 @@ example = fromRight [] $ parseOnly inputParser exampleInput
 exampleInput :: C.ByteString
 exampleInput =
   """
-  aaa: you hhh
-  you: bbb ccc
-  bbb: ddd eee
-  ccc: ddd eee fff
-  ddd: ggg
-  eee: out
-  fff: out
-  ggg: out
-  hhh: ccc fff iii
-  iii: out
+  123,456
+  789,111
 
   """

@@ -2,6 +2,8 @@ module Day07Spec (spec) where
 
 import qualified Data.ByteString.Char8 as C
 import Day07 (solve)
+import Protolude
+import System.Directory (doesFileExist)
 import Test.Hspec
 
 spec :: Spec
@@ -9,6 +11,16 @@ spec = do
   describe "solve" $ do
     it "should solve the example" $ do
       solve exampleInput `shouldBe` Right (21, 40)
+    it "should solve the actual problem" $ do
+      maybeInput <- readMyInput "input/07.txt"
+      case maybeInput of
+        Nothing -> pendingWith "input file missing"
+        Just input' -> solve input' `shouldBe` Right (1587, 5748679033029)
+
+readMyInput :: FilePath -> IO (Maybe ByteString)
+readMyInput fp = do
+  exists <- doesFileExist fp
+  if exists then Just <$> C.readFile fp else return Nothing
 
 exampleInput :: C.ByteString
 exampleInput =

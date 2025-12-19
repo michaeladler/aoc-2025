@@ -53,6 +53,7 @@
               pkgs.hpack
               pkgs.haskell.packages.ghc912.haskell-language-server
               pkgs.poop
+              pkgs.ormolu
             ];
 
             buildInputs = [ pkgs.z3 ];
@@ -81,6 +82,7 @@
               pkgs.hpack
               pkgs.haskell.packages.ghc912.haskell-language-server
               pkgs.poop
+              pkgs.ormolu
             ];
 
             buildInputs = [ pkgs.z3 ];

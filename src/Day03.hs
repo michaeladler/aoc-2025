@@ -2,13 +2,13 @@ module Day03 (solve) where
 
 import Data.Attoparsec.ByteString.Char8 (Parser, digit, endOfLine, many1, parseOnly, sepBy)
 import qualified Data.ByteString.Char8 as C
-import Data.Char (digitToInt)
 import qualified Data.List as List
+import Protolude
 
 type MyInt = Int
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = solveInternal <$> parseOnly parseInput content
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
+solve content = solveInternal <$> first toS (parseOnly parseInput content)
 
 parseInput :: Parser [[MyInt]]
 parseInput = many1 (digitToInt <$> digit) `sepBy` endOfLine

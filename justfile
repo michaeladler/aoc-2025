@@ -2,9 +2,9 @@ generate DAY:
     #!/usr/bin/env bash
     set -euo pipefail
     cat ./template/DayXX.hs | sed -e s/DayXX/Day{{ DAY }}/g > ./src/Day{{ DAY }}.hs
-    cat ./template/DayXXSpec.hs | sed -e s/DayXX/Day{{ DAY }}/g > ./test/Day{{ DAY }}Spec.hs
+    cat ./template/DayXXSpec.hs | sed -e s/DayXX/Day{{ DAY }}/g | sed -e s/XX.txt/{{ DAY }}.txt/g  > ./test/Day{{ DAY }}Spec.hs
     awk -f - app/Main.hs <<'EOF' > app/Main.hs.new
-    /import System.Environment/ {
+    /import Protolude/ {
         print "import qualified Day{{ DAY }}"
     }
     /Day not implemented yet/ {

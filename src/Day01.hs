@@ -3,7 +3,7 @@ module Day01 (solve) where
 import Control.Applicative
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly)
 import qualified Data.ByteString.Char8 as C
-import Data.Int (Int32)
+import Protolude
 
 type MyInt = Int32
 
@@ -13,11 +13,11 @@ data Direction = L | R
 newtype Command = Command (Direction, MyInt)
   deriving (Show, Eq)
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
 solve content = solveInternal <$> parseCommands content
 
-parseCommands :: C.ByteString -> Either String [Command]
-parseCommands = parseOnly (many' commandParser)
+parseCommands :: C.ByteString -> Either Text [Command]
+parseCommands bs = first toS (parseOnly (many' commandParser) bs)
   where
     commandParser :: Parser Command
     commandParser = do

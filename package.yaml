@@ -8,12 +8,14 @@ maintainer: Michael Adler
 ghc-options: -Wall
 
 dependencies:
-   - attoparsec
    - base
+   - attoparsec
+   - protolude
    - bytestring
    - matrix
    - unordered-containers
    - containers
+   - directory
    - vector # Vector is a "better" Array
    - array # Arrays are not for the faint of heart
    - pretty-simple # just for debugging purposes
@@ -21,6 +23,7 @@ dependencies:
    - z3 # day 10, painful to use
 
 default-extensions:
+  - NoImplicitPrelude
   - OverloadedStrings
   - MultilineStrings
   - TupleSections

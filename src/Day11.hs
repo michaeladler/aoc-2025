@@ -4,7 +4,7 @@ import Data.Array (Array, bounds, listArray, range, (!))
 import Data.Attoparsec.ByteString.Char8 (Parser, char, endOfLine, isSpace, parseOnly, sepBy, sepBy1, skipSpace, takeTill)
 import qualified Data.ByteString.Char8 as C
 import Data.Graph (Graph, Vertex, graphFromEdges)
-import Data.Int (Int64)
+import Protolude hiding (isSpace)
 
 type Label = C.ByteString
 
@@ -12,8 +12,8 @@ type Targets = [C.ByteString]
 
 type AocInput = [(Label, Targets)]
 
-solve :: C.ByteString -> Either String (Maybe Int64, Maybe Int64)
-solve content = solve' <$> parseOnly inputParser content
+solve :: C.ByteString -> Either Text (Maybe Int64, Maybe Int64)
+solve content = solve' <$> first toS (parseOnly inputParser content)
 
 inputParser :: Parser AocInput
 inputParser = lineParser `sepBy` endOfLine

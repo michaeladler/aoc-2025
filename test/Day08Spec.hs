@@ -1,13 +1,21 @@
 module Day08Spec (spec) where
 
-import Day08 (inputParser, solve')
+import qualified Data.ByteString.Char8 as C
+import Day08
+import Protolude
+import System.Directory (doesFileExist)
 import Test.Hspec
 
 spec :: Spec
 spec = do
   describe "solve" $ do
     it "should solve the example" $ do
-      solve' (inputParser exampleInput) 10 `shouldBe` (40, 25272)
+      solve' (inputParser exampleInput) 10 `shouldBe` Just (40, 25272)
+    it "should solve the actual problem" $ do
+      maybeInput <- readMyInput "input/08.txt"
+      case maybeInput of
+        Nothing -> pendingWith "input file missing"
+        Just input' -> solve input' `shouldBe` Right (75680, 8995844880)
   where
     exampleInput =
       """
@@ -33,3 +41,8 @@ spec = do
       425,690,689
 
       """
+
+readMyInput :: FilePath -> IO (Maybe ByteString)
+readMyInput fp = do
+  exists <- doesFileExist fp
+  if exists then Just <$> C.readFile fp else return Nothing

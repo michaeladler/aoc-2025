@@ -1,22 +1,20 @@
 module Day06 (solve) where
 
-import Control.Applicative ((<|>))
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', many1, parseOnly, sepBy, sepBy1, space)
 import qualified Data.ByteString.Char8 as C
-import Data.Int (Int64)
 import qualified Data.Matrix as Matrix
 import Data.Vector (Vector)
 import qualified Data.Vector as V
-import Prelude hiding (lines)
+import Protolude
 
 type MyInt = Int64
 
 data BinOp = Plus | Mul
   deriving (Eq, Show)
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
+solve :: C.ByteString -> Either Text (MyInt, Maybe MyInt)
 solve content =
-  parseOnly parseInput content >>= \(numbers, ops) ->
+  first toS (parseOnly parseInput content) >>= \(numbers, ops) ->
     Right (solvePart1 numbers ops, solvePart2 content ops)
 
 parseInput :: Parser ([[MyInt]], [BinOp])
@@ -42,27 +40,26 @@ solvePart1 numbers ops =
       results = map (uncurry computeCol) ops'
    in sum results
 
-solvePart2 :: C.ByteString -> [BinOp] -> MyInt
-solvePart2 input ops =
-  let tmp = C.lines input
-      lines = init tmp
-      binops = last tmp
+solvePart2 :: C.ByteString -> [BinOp] -> Maybe MyInt
+solvePart2 input ops = case unsnoc (C.lines input) of
+  Nothing -> Nothing
+  Just (ls, binops) -> sum <$> results
+    where
       colPos = findColumns binops
-      mx = Matrix.fromLists $ map (`splitCols` colPos) lines
+      mx = Matrix.fromLists $ map (`splitCols` colPos) ls
       cols = map (`Matrix.getCol` mx) [1 .. Matrix.ncols mx]
-      colsParsed = map parseCol cols
-      colsParsed' = zip colsParsed ops
       calc (xs, op) = case op of
-        Mul -> foldl' (*) 1 xs
-        Plus -> foldl' (+) 0 xs
-      results = map calc colsParsed'
-   in sum results
+        Mul -> foldl' (*) (1 :: MyInt) xs
+        Plus -> foldl' (+) (0 :: MyInt) xs
+      results = case mapM parseCol cols of
+        Just colsParsed -> let zipped = zip colsParsed ops in Just $ map calc zipped
+        _ -> Nothing
 
-parseCol :: Vector C.ByteString -> [MyInt]
-parseCol xs = if not (V.null xs) then map (extractNumber (V.toList xs)) [0 .. C.length (V.head xs) - 1] else []
+parseCol :: Vector C.ByteString -> Maybe [MyInt]
+parseCol xs = sequence $ if not (V.null xs) then map (extractNumber (V.toList xs)) [0 .. C.length (V.head xs) - 1] else []
 
-extractNumber :: [C.ByteString] -> Int -> MyInt
-extractNumber xs pos = read $ map (`C.index` pos) xs
+extractNumber :: [C.ByteString] -> Int -> Maybe MyInt
+extractNumber xs pos = readMaybe $ map (`C.index` pos) xs
 
 -- splitCols "123 328  51 64" [0,4,8,12] == ["123","328"," 51","64"]
 splitCols :: C.ByteString -> [Int] -> [C.ByteString]

@@ -1,17 +1,13 @@
 module Day10 (solve, Lights (..), parseLights, tcParser, toggleBits) where
 
-import Control.Monad.IO.Class (liftIO)
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly, sepBy, skipSpace, takeWhile1)
-import Data.Bits (shiftL, testBit, xor, (.|.))
 import qualified Data.ByteString.Char8 as BS
-import Data.Foldable (toList)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
-import Data.Maybe (catMaybes)
-import Data.Sequence (Seq (..), (><))
+import Data.Sequence ((><))
 import qualified Data.Sequence as Seq
 import qualified Data.Traversable as T
-import Data.Word (Word16)
+import Protolude
 import System.IO.Unsafe (unsafePerformIO)
 import Z3.Monad
 
@@ -22,15 +18,10 @@ type Joltages = [Int]
 type TC = (Lights, Buttons, Joltages)
 
 data Lights = Lights {bits :: !Word16, size :: !Int}
-  deriving (Eq, Ord)
+  deriving (Eq, Ord, Show)
 
-instance Show Lights where
-  show l = map bitChar [size l - 1, size l - 2 .. 0]
-    where
-      bitChar i = if testBit (bits l) i then '#' else '.'
-
-solve :: BS.ByteString -> Either String (Int, Integer)
-solve input = solve' <$> parseOnly tcParser input
+solve :: BS.ByteString -> Either Text (Int, Integer)
+solve input = solve' <$> first toS (parseOnly tcParser input)
 
 solve' :: [TC] -> (Int, Integer)
 solve' tcs = (sum (map bfsPart1 tcs), sum (map part2 tcs))
@@ -94,6 +85,7 @@ script :: TC -> Z3 [Integer]
 script (_, buttons, joltages) = do
   -- Create integer variables for each button
   buttonVars <- mapM (mkFreshIntVar . (\i -> 'b' : show i)) [0 .. (Seq.length buttons - 1)]
+  let buttonVars' = Seq.fromList buttonVars
   zero <- mkInteger 0
 
   -- Constraints: variables are positive
@@ -101,7 +93,7 @@ script (_, buttons, joltages) = do
 
   -- For each voltage constraint
   tmp <- T.forM (zip [0 ..] joltages) $ \(i, joltage) -> do
-    let vvars = [buttonVars !! j | (j, button) <- zip [0 ..] (toList buttons), i `elem` button]
+    let vvars = [buttonVars' `Seq.index` j | (j, button) <- zip [0 ..] (toList buttons), i `elem` button]
     sumVars <- mkAdd vvars
     target <- mkInteger (fromIntegral joltage)
     mkEq sumVars target
@@ -118,7 +110,7 @@ optimizeRun = do
     Sat -> pure ()
     r -> do
       liftIO . putStrLn =<< optimizeToString
-      error $ show r
+      liftIO (die (show r))
   optimizeGetModel
 
 runZ3 :: Z3 a -> a

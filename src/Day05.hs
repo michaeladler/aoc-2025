@@ -2,16 +2,15 @@ module Day05 (solve) where
 
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, parseOnly, sepBy)
 import qualified Data.ByteString.Char8 as C
-import Data.Foldable (find)
-import Data.Maybe (isJust)
+import Protolude
 
 type MyInt = Int
 
 newtype Interval = Interval (MyInt, MyInt)
   deriving (Eq, Show)
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve content = solveInternal <$> parseOnly parseInput content
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
+solve content = solveInternal <$> first toS (parseOnly parseInput content)
 
 parseInput :: Parser ([Interval], [MyInt])
 parseInput = do
@@ -36,12 +35,12 @@ parseIngredients = decimal `sepBy` endOfLine
 
 solveInternal :: ([Interval], [MyInt]) -> (MyInt, MyInt)
 solveInternal (fresh, ingredients) =
-  let part1 = length (filter id (map (ingredientIsFresh fresh) ingredients))
+  let part1 = length (filter identity (map (ingredientIsFresh fresh) ingredients))
    in -- Strategy part2: Apply reduceIntervals until there is no change, then use countCoverage:
       (part1, countCoverage (reduceIntervalsRec fresh))
 
 ingredientIsFresh :: [Interval] -> MyInt -> Bool
-ingredientIsFresh ivs ing = isJust $ find id (map (`containsIngredient` ing) ivs)
+ingredientIsFresh ivs ing = isJust $ find identity (map (`containsIngredient` ing) ivs)
 
 containsIngredient :: Interval -> MyInt -> Bool
 containsIngredient (Interval (a, b)) x = a <= x && x <= b

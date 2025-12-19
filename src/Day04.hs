@@ -1,10 +1,10 @@
 module Day04 (solve) where
 
-import Control.Applicative ((<|>))
 import Data.Attoparsec.ByteString.Char8 (Parser, char, endOfLine, many1, parseOnly, sepBy)
 import qualified Data.ByteString.Char8 as C
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HS
+import Protolude
 
 type MyInt = Int
 
@@ -13,11 +13,8 @@ data Cell = Empty | Paper
 
 type Grid = HashSet (Int, Int) -- first int is row, second is col
 
-solve :: C.ByteString -> Either String (MyInt, MyInt)
-solve input = solveInternal <$> parseInput input
-
-parseInput :: C.ByteString -> Either String [[Cell]]
-parseInput = parseOnly parseInput'
+solve :: C.ByteString -> Either Text (MyInt, MyInt)
+solve input = solveInternal <$> first toS (parseOnly parseInput' input)
 
 parseInput' :: Parser [[Cell]]
 parseInput' = many1 parseCell `sepBy` endOfLine
@@ -41,7 +38,7 @@ adjacentPositions :: Grid -> (Int, Int) -> Int
 adjacentPositions grid (row, col) =
   length $
     filter
-      id
+      identity
       ( map
           (`HS.member` grid)
           [ (row - 1, col - 1),
