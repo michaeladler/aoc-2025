@@ -47,7 +47,6 @@ library
     , containers
     , directory
     , disjoint-containers
-    , matrix
     , pretty-simple
     , protolude
     , unordered-containers
@@ -77,7 +76,6 @@ executable aoc2025
     , containers
     , directory
     , disjoint-containers
-    , matrix
     , pretty-simple
     , protolude
     , unordered-containers
@@ -121,7 +119,6 @@ test-suite spec
     , directory
     , disjoint-containers
     , hspec ==2.*
-    , matrix
     , pretty-simple
     , protolude
     , unordered-containers

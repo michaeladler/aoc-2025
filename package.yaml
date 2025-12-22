@@ -12,7 +12,6 @@ dependencies:
    - attoparsec
    - protolude
    - bytestring
-   - matrix
    - unordered-containers
    - containers
    - directory

@@ -2,9 +2,9 @@ module Day06 (solve) where
 
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', many1, parseOnly, sepBy, sepBy1, space)
 import qualified Data.ByteString.Char8 as C
-import qualified Data.Matrix as Matrix
-import Data.Vector (Vector)
-import qualified Data.Vector as V
+import qualified Data.IntMap as IntMap
+import Data.Sequence (Seq (..), (><))
+import qualified Data.Sequence as Seq
 import Protolude
 
 type MyInt = Int64
@@ -30,15 +30,17 @@ parseNumbers = many' (char ' ') >> decimal `sepBy1` many1 (char ' ')
 parseBinOp :: Parser BinOp
 parseBinOp = (char '+' >> pure Plus) <|> (char '*' >> pure Mul)
 
+columnMatrix :: [[a]] -> IntMap (Seq a)
+columnMatrix xs = foldl' f mempty (map (zip [0 ..]) xs)
+  where
+    f = foldl' (\acc' (col, val) -> IntMap.insertWith (flip (><)) col (Seq.singleton val) acc')
+
 solvePart1 :: [[MyInt]] -> [BinOp] -> MyInt
-solvePart1 numbers ops =
-  let mx = Matrix.fromLists numbers
-      computeCol op j = case op of
-        Mul -> foldl' (*) 1 (Matrix.getCol j mx)
-        Plus -> foldl' (+) 0 (Matrix.getCol j mx)
-      ops' = zip ops [1 ..]
-      results = map (uncurry computeCol) ops'
-   in sum results
+solvePart1 numbers ops = sum (zipWith opToFn ops (IntMap.elems (columnMatrix numbers)))
+
+opToFn :: (Foldable f, Num a) => BinOp -> f a -> a
+opToFn Mul = product
+opToFn Plus = sum
 
 solvePart2 :: C.ByteString -> [BinOp] -> Maybe MyInt
 solvePart2 input ops = case unsnoc (C.lines input) of
@@ -46,20 +48,24 @@ solvePart2 input ops = case unsnoc (C.lines input) of
   Just (ls, binops) -> sum <$> results
     where
       colPos = findColumns binops
-      mx = Matrix.fromLists $ map (`splitCols` colPos) ls
-      cols = map (`Matrix.getCol` mx) [1 .. Matrix.ncols mx]
-      calc (xs, op) = case op of
-        Mul -> foldl' (*) (1 :: MyInt) xs
-        Plus -> foldl' (+) (0 :: MyInt) xs
-      results = case mapM parseCol cols of
-        Just colsParsed -> let zipped = zip colsParsed ops in Just $ map calc zipped
-        _ -> Nothing
+      mx = columnMatrix (map (`splitCols` colPos) ls)
+      cols = IntMap.elems mx
+      results =
+        let colsParsed = map parseCol cols
+            zipped = zip colsParsed ops
+         in Just (map (\(xs, op) -> opToFn op xs) zipped)
 
-parseCol :: Vector C.ByteString -> Maybe [MyInt]
-parseCol xs = sequence $ if not (V.null xs) then map (extractNumber (V.toList xs)) [0 .. C.length (V.head xs) - 1] else []
+parseCol :: Seq C.ByteString -> [MyInt]
+parseCol xs@(x :<| _) = map (extractNumber xs) [0 .. C.length x - 1]
+parseCol _ = []
 
-extractNumber :: [C.ByteString] -> Int -> Maybe MyInt
-extractNumber xs pos = readMaybe $ map (`C.index` pos) xs
+extractNumber :: Seq C.ByteString -> Int -> MyInt
+extractNumber xs pos = let digits = map (`C.index` pos) xs in toNumber (Seq.filter (/= ' ') digits)
+
+toNumber :: Seq Char -> MyInt
+toNumber digits = fromIntegral $ foldl' (\acc x -> acc * 10 + x) 0 (map convertDigit digits)
+  where
+    convertDigit c = ord c - ord '0'
 
 -- splitCols "123 328  51 64" [0,4,8,12] == ["123","328"," 51","64"]
 splitCols :: C.ByteString -> [Int] -> [C.ByteString]
