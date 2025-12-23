@@ -14,6 +14,7 @@ dependencies:
    - bytestring
    - unordered-containers
    - containers
+   - MemoTrie
    - directory
    - vector # Vector is a "better" Array
    - array # Arrays are not for the faint of heart

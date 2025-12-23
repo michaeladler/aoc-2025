@@ -1,10 +1,11 @@
 module Day11 (solve) where
 
-import Data.Array (Array, bounds, listArray, range, (!))
 import Data.Attoparsec.ByteString.Char8 (Parser, char, endOfLine, isSpace, parseOnly, sepBy, sepBy1, skipSpace, takeTill)
 import qualified Data.ByteString.Char8 as C
 import Data.Graph (Graph, Vertex, graphFromEdges)
 import Protolude hiding (isSpace)
+import Data.MemoTrie
+import Data.Array ((!))
 
 type Label = C.ByteString
 
@@ -45,18 +46,9 @@ solve' input =
    in (part1, part2)
 
 countPaths :: Graph -> Vertex -> Vertex -> Int64
-countPaths graph start goal = memo ! start
+countPaths graph start goal = go start
   where
-    bnds = bounds graph
-
-    -- Define the lazy cache (Array):
-    -- 'memo' creates an array where every index 'v' contains the result of 'go v'
-    memo :: Array Vertex Int64
-    memo = listArray bnds [go v | v <- range bnds]
-
-    -- 3. The Logic Function
-    -- Instead of recursing via 'countPaths', we look up the result in 'memo'
     go :: Vertex -> Int64
-    go current
-      | current == goal = 1
-      | otherwise = sum [memo ! neighbor | neighbor <- graph ! current]
+    go = memoFix $ \rec current ->
+      if current == goal then 1
+      else sum [rec neighbor | neighbor <- graph ! current]

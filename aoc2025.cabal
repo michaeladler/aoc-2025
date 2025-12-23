@@ -40,7 +40,8 @@ library
       LambdaCase
   ghc-options: -Wall
   build-depends:
-      array
+      MemoTrie
+    , array
     , attoparsec
     , base
     , bytestring
@@ -68,7 +69,8 @@ executable aoc2025
       LambdaCase
   ghc-options: -Wall -O2
   build-depends:
-      aoc2025
+      MemoTrie
+    , aoc2025
     , array
     , attoparsec
     , base
@@ -111,7 +113,8 @@ test-suite spec
       LambdaCase
   ghc-options: -Wall
   build-depends:
-      aoc2025
+      MemoTrie
+    , aoc2025
     , array
     , attoparsec
     , base
