@@ -2,8 +2,7 @@ module Day10 (solve, Lights (..), parseLights, tcParser, toggleBits) where
 
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', parseOnly, sepBy, skipSpace, takeWhile1)
 import qualified Data.ByteString.Char8 as BS
-import Data.HashSet (HashSet)
-import qualified Data.HashSet as HashSet
+import qualified Data.IntSet as IntSet
 import Data.Sequence ((><))
 import qualified Data.Sequence as Seq
 import qualified Data.Traversable as T
@@ -17,7 +16,7 @@ type Joltages = [Int]
 
 type TC = (Lights, Buttons, Joltages)
 
-data Lights = Lights {bits :: !Word16, size :: !Int}
+data Lights = Lights {bits :: !Int, size :: !Int}
   deriving (Eq, Ord, Show)
 
 solve :: BS.ByteString -> Either Text (Int, Integer)
@@ -27,23 +26,23 @@ solve' :: [TC] -> (Int, Integer)
 solve' tcs = (sum (map bfsPart1 tcs), sum (map part2 tcs))
 
 bfsPart1 :: TC -> Int
-bfsPart1 (target, buttons, _) = go (Seq.singleton (0, 0)) HashSet.empty
+bfsPart1 (target, buttons, _) = go (Seq.singleton (0, 0)) mempty
   where
     neighbors lights = fmap (toggleBits lights) buttons
 
-    go :: Seq (Word16, Int) -> HashSet Word16 -> Int
+    go :: Seq (Int, Int) -> IntSet -> Int
     go Seq.Empty _ = 0 -- not found
     go ((current, depth) Seq.:<| queue) visited
       | current == bits target = depth
-      | current `HashSet.member` visited = go queue visited
+      | current `IntSet.member` visited = go queue visited
       | otherwise =
-          let unvisitedNeighbors = Seq.filter (\x -> not (HashSet.member x visited)) (neighbors current)
+          let unvisitedNeighbors = Seq.filter (\x -> not (IntSet.member x visited)) (neighbors current)
               newQueue = queue >< fmap (,depth + 1) unvisitedNeighbors
-              newVisited = HashSet.insert current visited
+              newVisited = IntSet.insert current visited
            in go newQueue newVisited
 
-toggleBits :: Word16 -> [Int] -> Word16
-toggleBits n is = let mask = foldr (\k acc -> acc .|. (1 `shiftL` k)) 0 is in n `xor` mask
+toggleBits :: Int -> [Int] -> Int
+toggleBits n is = let bitMask = foldr (\k acc -> acc .|. (1 `shiftL` k)) 0 is in n `xor` bitMask
 
 part2 :: TC -> Integer
 part2 tc = sum (runZ3 (script tc))
@@ -86,10 +85,10 @@ script (_, buttons, joltages) = do
   -- Create integer variables for each button
   buttonVars <- mapM (mkFreshIntVar . (\i -> 'b' : show i)) [0 .. (Seq.length buttons - 1)]
   let buttonVars' = Seq.fromList buttonVars
-  zero <- mkInteger 0
+  zeroVal <- mkInteger 0
 
   -- Constraints: variables are positive
-  optimizeAssert =<< mkAnd =<< T.sequence [mkGe v zero | v <- buttonVars]
+  optimizeAssert =<< mkAnd =<< T.sequence [mkGe v zeroVal | v <- buttonVars]
 
   -- For each voltage constraint
   tmp <- T.forM (zip [0 ..] joltages) $ \(i, joltage) -> do
