@@ -3,11 +3,15 @@ module AocUtils
     sortDesc,
     skipUntil,
     parseOnly,
+    columns,
   )
 where
 
 import Data.Attoparsec.ByteString.Char8 (Parser)
 import qualified Data.Attoparsec.ByteString.Char8 as AP
+import qualified Data.IntMap as IntMap
+import Data.Sequence ((><))
+import qualified Data.Sequence as Seq
 import Protolude
 
 -- | Generate all unique unordered pairs from a list.
@@ -25,3 +29,17 @@ skipUntil p = p <|> (AP.anyChar *> skipUntil p)
 
 parseOnly :: Parser a -> ByteString -> Either Text a
 parseOnly p = first toS . AP.parseOnly p
+
+-- | Transpose a list of rows into a map of columns.
+-- Each key in the resulting 'IntMap' is the column index,
+-- and its value is a 'Seq' containing all elements from that column,
+-- in the order they appeared in the input rows.
+-- Handles ragged (non-square) input: missing values in shorter rows are ignored.
+--
+-- Example:
+-- >>> columns [[1,2],[3,4,5]]
+-- fromList [(0,fromList [1,3]), (1,fromList [2,4]), (2,fromList [5])]
+columns :: [[a]] -> IntMap (Seq a)
+columns xs = foldl' f mempty (map (zip [0 ..]) xs)
+  where
+    f = foldl' (\acc' (col, val) -> IntMap.insertWith (flip (><)) col (Seq.singleton val) acc')

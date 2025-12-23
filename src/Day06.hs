@@ -1,9 +1,10 @@
 module Day06 (solve) where
 
-import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', many1, parseOnly, sepBy, sepBy1, space)
+import AocUtils
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, endOfLine, many', many1, sepBy, sepBy1, space)
 import qualified Data.ByteString.Char8 as C
 import qualified Data.IntMap as IntMap
-import Data.Sequence (Seq (..), (><))
+import Data.Sequence (Seq (..))
 import qualified Data.Sequence as Seq
 import Protolude
 
@@ -14,7 +15,7 @@ data BinOp = Plus | Mul
 
 solve :: C.ByteString -> Either Text (MyInt, Maybe MyInt)
 solve content =
-  first toS (parseOnly parseInput content) >>= \(numbers, ops) ->
+  parseOnly parseInput content >>= \(numbers, ops) ->
     Right (solvePart1 numbers ops, solvePart2 content ops)
 
 parseInput :: Parser ([[MyInt]], [BinOp])
@@ -30,13 +31,8 @@ parseNumbers = many' (char ' ') >> decimal `sepBy1` many1 (char ' ')
 parseBinOp :: Parser BinOp
 parseBinOp = (char '+' >> pure Plus) <|> (char '*' >> pure Mul)
 
-columnMatrix :: [[a]] -> IntMap (Seq a)
-columnMatrix xs = foldl' f mempty (map (zip [0 ..]) xs)
-  where
-    f = foldl' (\acc' (col, val) -> IntMap.insertWith (flip (><)) col (Seq.singleton val) acc')
-
 solvePart1 :: [[MyInt]] -> [BinOp] -> MyInt
-solvePart1 numbers ops = sum (zipWith opToFn ops (IntMap.elems (columnMatrix numbers)))
+solvePart1 numbers ops = sum (zipWith opToFn ops (IntMap.elems (columns numbers)))
 
 opToFn :: (Foldable f, Num a) => BinOp -> f a -> a
 opToFn Mul = product
@@ -48,7 +44,7 @@ solvePart2 input ops = case unsnoc (C.lines input) of
   Just (ls, binops) -> sum <$> results
     where
       colPos = findColumns binops
-      mx = columnMatrix (map (`splitCols` colPos) ls)
+      mx = columns (map (`splitCols` colPos) ls)
       cols = IntMap.elems mx
       results =
         let colsParsed = map parseCol cols
