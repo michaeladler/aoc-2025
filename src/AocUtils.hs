@@ -4,6 +4,8 @@ module AocUtils
     skipUntil,
     parseOnly,
     columns,
+    neighbours4,
+    neighbors8,
   )
 where
 
@@ -43,3 +45,22 @@ columns :: [[a]] -> IntMap (Seq a)
 columns xs = foldl' f mempty (map (zip [0 ..]) xs)
   where
     f = foldl' (\acc' (col, val) -> IntMap.insertWith (flip (><)) col (Seq.singleton val) acc')
+
+-- | Returns the 4 points orthogonally adjacent to the given point.
+{-# INLINE neighbours4 #-}
+neighbours4 :: (Num a, Num b) => (a, b) -> [(a, b)]
+neighbours4 (x, y) = [(x + 1, y), (x, y + 1), (x - 1, y), (x, y - 1)]
+
+-- | Returns the 8 points orthogonally or diagonally adjacent to the given point.
+{-# INLINE neighbors8 #-}
+neighbors8 :: (Eq a, Eq b, Num a, Num b) => (a, b) -> [(a, b)]
+neighbors8 (row, col) =
+  [ (row - 1, col - 1),
+    (row - 1, col),
+    (row - 1, col + 1),
+    (row, col - 1),
+    (row, col + 1),
+    (row + 1, col - 1),
+    (row + 1, col),
+    (row + 1, col + 1)
+  ]
