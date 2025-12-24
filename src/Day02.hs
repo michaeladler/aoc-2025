@@ -1,47 +1,41 @@
-module Day02 (solve, invalidIDs, isInvalidID) where
+module Day02 where
 
-import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, parseOnly, sepBy)
+import AocUtils
+import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, sepBy)
 import qualified Data.ByteString.Builder as BB
 import qualified Data.ByteString.Char8 as C
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.Sequence as Seq
 import Protolude
 
-type MyInt = Int
+solve :: C.ByteString -> Either Text (Int, Int)
+solve bs = solveInternal <$> parseOnly parseRanges bs
 
-solve :: C.ByteString -> Either Text (MyInt, MyInt)
-solve = fmap solveInternal . first toS . parseOnly parseRanges
-
--- Parse a single range like "11-22"
-parseRange :: Parser (MyInt, MyInt)
-parseRange = do
-  start <- decimal
-  _ <- char '-'
-  end <- decimal
-  return (start, end)
-
--- Parse the full line of comma-separated ranges
-parseRanges :: Parser [(MyInt, MyInt)]
+parseRanges :: Parser [(Int, Int)]
 parseRanges = parseRange `sepBy` char ','
+  where
+    parseRange = (,) <$> decimal <* char '-' <*> decimal
 
-solveInternal :: [(MyInt, MyInt)] -> (MyInt, MyInt)
+solveInternal :: [(Int, Int)] -> (Int, Int)
 solveInternal xs =
   let part1 = foldl' (\acc range -> acc + sum (invalidIDs range)) 0 xs
       part2 = foldl' (\acc range -> acc + sum (invalidIDsPart2 range)) 0 xs
    in (part1, part2)
 
-invalidIDs :: (MyInt, MyInt) -> [MyInt]
+invalidIDs :: (Int, Int) -> [Int]
 invalidIDs (lower, upper) = filter isInvalidID [lower .. upper]
 
-isInvalidID :: MyInt -> Bool
+isInvalidID :: Int -> Bool
 isInvalidID x =
-  let s = intToLazyBS x
-      (q, r) = BL.length s `divMod` 2
-   in r == 0 && BL.take q s == BL.drop q s
+  let ds = digits x
+      (q, r) = Seq.length ds `divMod` 2
+      (lhs, rhs) = Seq.splitAt q ds
+   in r == 0 && lhs == rhs
 
-invalidIDsPart2 :: (MyInt, MyInt) -> [MyInt]
+invalidIDsPart2 :: (Int, Int) -> [Int]
 invalidIDsPart2 (lower, upper) = filter isInvalidIDPart2 [lower .. upper]
 
-isInvalidIDPart2 :: MyInt -> Bool
+isInvalidIDPart2 :: Int -> Bool
 isInvalidIDPart2 x =
   let s = intToLazyBS x
       n = fromIntegral (BL.length s)

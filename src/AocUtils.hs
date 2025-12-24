@@ -6,13 +6,14 @@ module AocUtils
     columns,
     neighbours4,
     neighbors8,
+    digits,
   )
 where
 
 import Data.Attoparsec.ByteString.Char8 (Parser)
 import qualified Data.Attoparsec.ByteString.Char8 as AP
 import qualified Data.IntMap as IntMap
-import Data.Sequence ((><))
+import Data.Sequence ((<|), (><))
 import qualified Data.Sequence as Seq
 import Protolude
 
@@ -21,6 +22,13 @@ import Protolude
 -- with each combination appearing only once (order does not matter).
 choose2 :: [a] -> [(a, a)]
 choose2 xs = [(x, y) | (x : ys) <- tails xs, y <- ys]
+
+{-# INLINE digits #-}
+digits :: (Integral a) => a -> Seq a
+digits n = go (abs n) empty
+  where
+    go 0 acc = if n == 0 then Seq.singleton 0 else acc
+    go x acc = let (q, r) = x `quotRem` 10 in go q (r <| acc)
 
 sortDesc :: (Ord a) => [a] -> [a]
 sortDesc = sortBy (comparing Down)
