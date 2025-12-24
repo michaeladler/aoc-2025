@@ -14,3 +14,10 @@ generate DAY:
     EOF
     mv app/Main.hs.new app/Main.hs
     hpack
+
+bench:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  BIN=$(cabal list-bin aoc2025)
+  hyperfine --warmup 3 --export-markdown bench.md \
+      "$BIN 1" "$BIN 2" "$BIN 3" "$BIN 4" "$BIN 5" "$BIN 6" "$BIN 7" "$BIN 8" "$BIN 9" "$BIN 10" "$BIN 11" "$BIN 12"
