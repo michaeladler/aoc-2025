@@ -9,7 +9,7 @@ version:        0.0.0
 author:         Michael Adler
 maintainer:     Michael Adler
 copyright:      (c) 2025 Michael Adler
-license:        MIT
+license:        Apache-2.0
 license-file:   LICENSE
 build-type:     Simple
 
