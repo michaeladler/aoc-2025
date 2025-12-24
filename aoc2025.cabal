@@ -67,7 +67,7 @@ executable aoc2025
       MultilineStrings
       TupleSections
       LambdaCase
-  ghc-options: -Wall -O2
+  ghc-options: -Wall
   build-depends:
       MemoTrie
     , aoc2025

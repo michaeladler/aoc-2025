@@ -32,8 +32,6 @@ default-extensions:
 executable:
   main: Main.hs
   source-dirs: app
-  ghc-options:
-    - -O2
   dependencies:
     - aoc2025
 
