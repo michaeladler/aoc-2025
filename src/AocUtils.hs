@@ -7,6 +7,8 @@ module AocUtils
     neighbours4,
     neighbors8,
     digits,
+    replicateInt,
+    numDigits,
   )
 where
 
@@ -20,6 +22,7 @@ import Protolude
 -- | Generate all unique unordered pairs from a list.
 -- Each pair (x, y) consists of two distinct elements from the input list,
 -- with each combination appearing only once (order does not matter).
+{-# INLINE choose2 #-}
 choose2 :: [a] -> [(a, a)]
 choose2 xs = [(x, y) | (x : ys) <- tails xs, y <- ys]
 
@@ -30,6 +33,23 @@ digits n = go (abs n) empty
     go 0 acc = if n == 0 then Seq.singleton 0 else acc
     go x acc = let (q, r) = x `quotRem` 10 in go q (r <| acc)
 
+-- | Repeats the integer 'a', 'n' times by concatenating its digits.
+-- For example, replicateInt 12 3 == 121212
+{-# INLINE replicateInt #-}
+replicateInt :: (Integral a) => a -> Int -> a
+replicateInt a n = foldl' (\acc _ -> acc * pow10b + a) a [2 .. n]
+  where
+    b = numDigits a
+    pow10b = 10 ^ b
+
+-- |
+--  numDigits computes the number of digits in a given integer.
+--  For example, numDigits 1234 == 4.
+{-# INLINE numDigits #-}
+numDigits :: (Integral t) => t -> Int
+numDigits n = Seq.length (digits n)
+
+{-# INLINE sortDesc #-}
 sortDesc :: (Ord a) => [a] -> [a]
 sortDesc = sortBy (comparing Down)
 

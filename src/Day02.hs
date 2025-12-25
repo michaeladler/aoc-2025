@@ -2,9 +2,8 @@ module Day02 where
 
 import AocUtils
 import Data.Attoparsec.ByteString.Char8 (Parser, char, decimal, sepBy)
-import qualified Data.ByteString.Builder as BB
 import qualified Data.ByteString.Char8 as C
-import qualified Data.ByteString.Lazy as BL
+import qualified Data.IntSet as IntSet
 import qualified Data.Sequence as Seq
 import Protolude
 
@@ -18,37 +17,25 @@ parseRanges = parseRange `sepBy` char ','
 
 solveInternal :: [(Int, Int)] -> (Int, Int)
 solveInternal xs =
-  let part1 = foldl' (\acc range -> acc + sum (invalidIDs range)) 0 xs
-      part2 = foldl' (\acc range -> acc + sum (invalidIDsPart2 range)) 0 xs
+  let part1 = foldl' (\acc (lower, upper) -> acc + sum (filter isInvalidID [lower .. upper])) 0 xs
+      tmp = IntSet.unions (map (uncurry invalidIDsPart2) xs)
+      part2 = IntSet.foldl' (+) 0 tmp
    in (part1, part2)
 
-invalidIDs :: (Int, Int) -> [Int]
-invalidIDs (lower, upper) = filter isInvalidID [lower .. upper]
-
 isInvalidID :: Int -> Bool
-isInvalidID x =
-  let ds = digits x
-      (q, r) = Seq.length ds `divMod` 2
-      (lhs, rhs) = Seq.splitAt q ds
-   in r == 0 && lhs == rhs
+isInvalidID x = r == 0 && lhs == rhs
+  where
+    ds = digits x
+    (q, r) = Seq.length ds `divMod` 2
+    (lhs, rhs) = Seq.splitAt q ds
 
-invalidIDsPart2 :: (Int, Int) -> [Int]
-invalidIDsPart2 (lower, upper) = filter isInvalidIDPart2 [lower .. upper]
+invalidIDsPart2 :: Int -> Int -> IntSet
+invalidIDsPart2 lower upper =
+  let buildBlock n =
+        let divisors = mapMaybe (\i -> let (q, r) = n `divMod` i in if r == 0 && q >= 2 then Just (i, q) else Nothing) [1 .. n `div` 2]
+         in foldl' (\acc xs -> acc `IntSet.union` IntSet.fromList (filter (\x -> lower <= x && x <= upper) xs)) IntSet.empty (map helper divisors)
+      blocks = map buildBlock [numDigits lower .. numDigits upper]
+   in IntSet.unions blocks
 
-isInvalidIDPart2 :: Int -> Bool
-isInvalidIDPart2 x =
-  let s = intToLazyBS x
-      n = fromIntegral (BL.length s)
-      indices = [i | i <- [1 .. n `div` 2], n `mod` i == 0]
-      candidates = map (\i -> (n `div` i, BL.take i s)) indices
-      candidates' = map (\(i, bs) -> replicateBS (fromIntegral i) bs) candidates
-   in isJust (find (== s) candidates')
-
-intToLazyBS :: Int -> BL.ByteString
-intToLazyBS = BB.toLazyByteString . BB.intDec
-
-replicateBS :: Int -> BL.ByteString -> BL.ByteString
-replicateBS n bs = case n of
-  0 -> mempty
-  1 -> bs
-  _ -> bs <> replicateBS (n - 1) bs
+helper :: (Int, Int) -> [Int]
+helper (blockLen, mult) = [replicateInt a mult | a <- [10 ^ (blockLen - 1) .. 10 ^ blockLen - 1]]

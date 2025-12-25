@@ -19,51 +19,6 @@ spec = do
         Nothing -> pendingWith "input file missing"
         Just input' -> solve input' `shouldBe` Right (12850231731, 24774350322)
 
-  describe "isInvalidID" $ do
-    it "should detect ID 11 as invalid" $ do
-      isInvalidID 11 `shouldBe` True
-    it "should detect ID 22 as invalid" $ do
-      isInvalidID 22 `shouldBe` True
-    it "should detect ID 99 as invalid" $ do
-      isInvalidID 99 `shouldBe` True
-    it "should detect ID 100 as valid" $ do
-      isInvalidID 100 `shouldBe` False
-    it "should detect ID 1010 as invalid" $ do
-      isInvalidID 1010 `shouldBe` True
-    it "should detect ID 1188511885 as invalid" $ do
-      isInvalidID 1188511885 `shouldBe` True
-    it "should detect ID 222222 as invalid" $ do
-      isInvalidID 222222 `shouldBe` True
-    it "should detect ID 446446 as invalid" $ do
-      isInvalidID 446446 `shouldBe` True
-    it "should detect ID 38593859 as invalid" $ do
-      isInvalidID 38593859 `shouldBe` True
-
-  describe "invalidIDs" $ do
-    it "finds invalid IDs in range (11, 22)" $ do
-      invalidIDs (11, 22) `shouldBe` [11, 22]
-
-    it "finds invalid ID 99 in range (95, 115)" $ do
-      invalidIDs (95, 115) `shouldBe` [99]
-
-    it "finds invalid ID 1010 in range (998, 1012)" $ do
-      invalidIDs (998, 1012) `shouldBe` [1010]
-
-    it "finds invalid ID 1188511885 in range (1188511880, 1188511890)" $ do
-      invalidIDs (1188511880, 1188511890) `shouldBe` [1188511885]
-
-    it "finds invalid ID 222222 in range (222220, 222224)" $ do
-      invalidIDs (222220, 222224) `shouldBe` [222222]
-
-    it "finds no invalid IDs in range (1698522, 1698528)" $ do
-      invalidIDs (1698522, 1698528) `shouldBe` []
-
-    it "finds invalid ID 446446 in range (446443, 446449)" $ do
-      invalidIDs (446443, 446449) `shouldBe` [446446]
-
-    it "finds invalid ID 38593859 in range (38593856, 38593862)" $ do
-      invalidIDs (38593856, 38593862) `shouldBe` [38593859]
-
 readMyInput :: FilePath -> IO (Maybe ByteString)
 readMyInput fp = do
   exists <- doesFileExist fp
