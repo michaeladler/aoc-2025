@@ -26,7 +26,7 @@ solve' input k =
 
       allDisjoint = foldl' (flip DS.insert) DS.empty input :: DS.DisjointSet Point
       initial = (allDisjoint, Point (0, 0, 0), Point (0, 0, 0))
-      folded = scanl (\(ds', _, _) (p, q) -> (DS.union p q ds', p, q)) initial sorted
+      folded = scanl' (\(ds', _, _) (p, q) -> (DS.union p q ds', p, q)) initial sorted
       folded' = map (\(ds', p, q) -> (DS.sets ds', p, q)) folded
    in case head $ filter (\(ds', _, _) -> ds' == 1) folded' of
         Just (_, Point (x, _, _), Point (x', _, _)) -> Just (part1, x * x')
