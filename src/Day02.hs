@@ -33,9 +33,9 @@ invalidIDsPart2 :: Int -> Int -> IntSet
 invalidIDsPart2 lower upper =
   let buildBlock n =
         let divisors = mapMaybe (\i -> let (q, r) = n `divMod` i in if r == 0 && q >= 2 then Just (i, q) else Nothing) [1 .. n `div` 2]
-         in foldl' (\acc xs -> acc `IntSet.union` IntSet.fromList (filter (\x -> lower <= x && x <= upper) xs)) IntSet.empty (map helper divisors)
+         in IntSet.unions (map (helper lower upper) divisors)
       blocks = map buildBlock [numDigits lower .. numDigits upper]
    in IntSet.unions blocks
 
-helper :: (Int, Int) -> [Int]
-helper (blockLen, mult) = [replicateInt a mult | a <- [10 ^ (blockLen - 1) .. 10 ^ blockLen - 1]]
+helper :: Int -> Int -> (Int, Int) -> IntSet
+helper l u (n, c) = IntSet.fromDistinctAscList $ filter (\x -> l <= x && x <= u) [replicateInt a c | a <- [10 ^ (n - 1) .. 10 ^ n - 1]]
