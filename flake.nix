@@ -52,7 +52,7 @@
               pkgs.cabal2nix
               pkgs.hpack
               pkgs.haskell.packages.ghc912.haskell-language-server
-              pkgs.poop
+              pkgs.hyperfine
               pkgs.ormolu
             ];
 
@@ -81,7 +81,7 @@
               pkgs.cabal2nix
               pkgs.hpack
               pkgs.haskell.packages.ghc912.haskell-language-server
-              pkgs.poop
+              pkgs.hyperfine
               pkgs.ormolu
             ];
 
