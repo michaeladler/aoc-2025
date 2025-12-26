@@ -7,7 +7,7 @@ This year I'm revisiting Haskell after taking a multi-year break from the langua
 | Day |   Mean [ms] | Min [ms] | Max [ms] |
 |:----|------------:|---------:|---------:|
 | 1   |   8.0 ± 0.6 |      6.6 |     10.7 |
-| 2   | 148.3 ± 1.3 |    144.7 |    149.8 |
+| 2   |  19.1 ± 0.7 |     18.0 |     21.4 |
 | 3   |   6.0 ± 0.6 |      4.6 |      8.4 |
 | 4   |  41.4 ± 1.1 |     39.5 |     44.2 |
 | 5   |   4.5 ± 0.4 |      3.5 |      6.5 |
