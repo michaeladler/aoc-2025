@@ -8,7 +8,7 @@ generate DAY:
         print "import qualified Day{{ DAY }}"
     }
     /Day not implemented yet/ {
-        print "runDay {{ DAY }} = solveDay Day{{ DAY }}.solve \"input/{{ DAY }}.txt\""
+        print "runDay {{ DAY }} = runSolver Day{{ DAY }}.solve \"input/{{ DAY }}.txt\""
     }
     { print }
     EOF
