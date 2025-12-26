@@ -4,6 +4,9 @@ This year I'm revisiting Haskell after taking a multi-year break from the langua
 
 ## Benchmarks
 
+CPU: AMD Ryzen 7 PRO 8840U
+
+
 | Day |   Mean [ms] | Min [ms] | Max [ms] |
 |:----|------------:|---------:|---------:|
 | 1   |   8.0 ± 0.6 |      6.6 |     10.7 |
