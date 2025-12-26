@@ -1,10 +1,12 @@
 module AocUtilsSpec (spec) where
 
 import AocUtils
+import qualified Data.ByteString as BS
 import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Protolude
 import Test.Hspec
+import Test.QuickCheck
 
 spec :: Spec
 spec = describe "columns" $ do
@@ -42,3 +44,6 @@ spec = describe "columns" $ do
   describe "numDigits" $ do
     it "should return 4 for 1000" $
       numDigits 1000 `shouldBe` 4
+    it "should compute the correct number of digits" $
+      property $
+        \x -> numDigits x `shouldBe` BS.length (show (abs x))

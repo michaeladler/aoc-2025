@@ -1,7 +1,7 @@
 { mkDerivation, array, attoparsec, base, bytestring, containers
 , directory, disjoint-containers, hspec, hspec-discover, lib
-, MemoTrie, pretty-simple, protolude, unordered-containers, vector
-, z3
+, MemoTrie, pretty-simple, protolude, QuickCheck
+, unordered-containers, vector, z3
 }:
 mkDerivation {
   pname = "aoc2025";
@@ -22,9 +22,9 @@ mkDerivation {
   testHaskellDepends = [
     array attoparsec base bytestring containers directory
     disjoint-containers hspec MemoTrie pretty-simple protolude
-    unordered-containers vector z3
+    QuickCheck unordered-containers vector z3
   ];
   testToolDepends = [ hspec-discover ];
-  license = lib.licenses.mit;
+  license = lib.licenses.asl20;
   mainProgram = "aoc2025";
 }
