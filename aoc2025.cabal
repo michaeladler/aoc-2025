@@ -38,6 +38,7 @@ library
       MultilineStrings
       TupleSections
       LambdaCase
+      RecordWildCards
   ghc-options: -Wall
   build-depends:
       MemoTrie
@@ -67,6 +68,7 @@ executable aoc2025
       MultilineStrings
       TupleSections
       LambdaCase
+      RecordWildCards
   ghc-options: -Wall
   build-depends:
       MemoTrie
@@ -111,6 +113,7 @@ test-suite spec
       MultilineStrings
       TupleSections
       LambdaCase
+      RecordWildCards
   ghc-options: -Wall
   build-depends:
       MemoTrie

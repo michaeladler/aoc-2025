@@ -28,6 +28,7 @@ default-extensions:
   - MultilineStrings
   - TupleSections
   - LambdaCase
+  - RecordWildCards 
 
 executable:
   main: Main.hs
